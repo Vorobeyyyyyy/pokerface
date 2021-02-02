@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+   <meta charset="UTF-8">
+   <title>Darkstone</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="style.css" type="text/css">
+   <link rel="stylesheet" href="style2.css" type="text/css">
+
+</head>
+
+<body>
+
+   <div>
+      <div class="game-title"> POKER </div>
+      <div class="dws-wrapper">
+         <section id="connect-menu-id-1" class="container-elements">
+            <div>
+               <div class="input-data">
+                  <input type="text" required>
+                  <label>NICKNAME</label>
+               </div>
+               <div class="input-data">
+                  <input type="text" required>
+                  <label>ROOM ID</label>
+               </div>
+               <div>
+                  <input type="button" value="Back" class="usl-btn" onclick="gotoMainMenu()">
+                  <input type="button" value="Connect" class="usl-btn" onclick="connect()"> 
+               </div>
+            </div>
+         </section>
+         <section id="main-menu-id-1" class="container-images">
+            <div class="img-box" style="background-image: url(img/img_1.jpg)" onclick="gotoConnectMenu()">
+               <span class="bor-left-right"></span>
+               <span class="bor-top-bottom"></span>
+               <div class="content">
+                  <h2>Присоединиться</h2>
+                  <p>Присоединиться к лобби.</p>
+               </div>
+            </div>
+            <div class="img-box" style="background-image: url(img/img_2.jpg)">
+               <span class="bor-left-right"></span>
+               <span class="bor-top-bottom"></span>
+               <div class="content">
+                  <h2>Создать лобби</h2>
+                  <p>Создать лобби, что бы другие игроки смогли присоединиться к вам.</p>
+               </div>
+            </div>
+            <div id="to-connect-menu-id-1" class="img-box" style="background-image: url(img/img_3.jpg)">
+               <span class="bor-left-right"></span>
+               <span class="bor-top-bottom"></span>
+               <div class="content">
+                  <h2>Правила игры</h2>
+                  <p>Краткое руководство по игре в покер.</p>
+               </div>
+            </div>
+         </section>
+      </div>
+   </div>
+
+   <script src="app.js"></script>
+
+</body>
+
+</html>
