@@ -1,6 +1,6 @@
 package by.bsuir.pokerface.warehouse;
 
-import by.bsuir.pokerface.entity.board.Board;
+import by.bsuir.pokerface.entity.room.Room;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -9,129 +9,129 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-public class BoardWarehouse {
-    private final static BoardWarehouse instance = new BoardWarehouse();
+public class RoomWarehouse {
+    private final static RoomWarehouse instance = new RoomWarehouse();
 
-    private final List<Board> boards = new ArrayList<>();
+    private final List<Room> rooms = new ArrayList<>();
 
-    private BoardWarehouse() {}
+    private RoomWarehouse() {}
 
-    public static BoardWarehouse getInstance() {
+    public static RoomWarehouse getInstance() {
         return instance;
     }
 
     public int size() {
-        return boards.size();
+        return rooms.size();
     }
 
     public boolean isEmpty() {
-        return boards.isEmpty();
+        return rooms.isEmpty();
     }
 
     public boolean contains(Object o) {
-        return boards.contains(o);
+        return rooms.contains(o);
     }
 
-    public Iterator<Board> iterator() {
-        return boards.iterator();
+    public Iterator<Room> iterator() {
+        return rooms.iterator();
     }
 
     public Object[] toArray() {
-        return boards.toArray();
+        return rooms.toArray();
     }
 
     public <T> T[] toArray(T[] a) {
-        return boards.toArray(a);
+        return rooms.toArray(a);
     }
 
-    public boolean add(Board board) {
-        return boards.add(board);
+    public boolean add(Room room) {
+        return rooms.add(room);
     }
 
     public boolean remove(Object o) {
-        return boards.remove(o);
+        return rooms.remove(o);
     }
 
     public boolean containsAll(Collection<?> c) {
-        return boards.containsAll(c);
+        return rooms.containsAll(c);
     }
 
-    public boolean addAll(Collection<? extends Board> c) {
-        return boards.addAll(c);
+    public boolean addAll(Collection<? extends Room> c) {
+        return rooms.addAll(c);
     }
 
-    public boolean addAll(int index, Collection<? extends Board> c) {
-        return boards.addAll(index, c);
+    public boolean addAll(int index, Collection<? extends Room> c) {
+        return rooms.addAll(index, c);
     }
 
     public boolean removeAll(Collection<?> c) {
-        return boards.removeAll(c);
+        return rooms.removeAll(c);
     }
 
     public boolean retainAll(Collection<?> c) {
-        return boards.retainAll(c);
+        return rooms.retainAll(c);
     }
 
-    public void replaceAll(UnaryOperator<Board> operator) {
-        boards.replaceAll(operator);
+    public void replaceAll(UnaryOperator<Room> operator) {
+        rooms.replaceAll(operator);
     }
 
-    public void sort(Comparator<? super Board> c) {
-        boards.sort(c);
+    public void sort(Comparator<? super Room> c) {
+        rooms.sort(c);
     }
 
     public void clear() {
-        boards.clear();
+        rooms.clear();
     }
 
     @Override
     public boolean equals(Object o) {
-        return boards.equals(o);
+        return rooms.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return boards.hashCode();
+        return rooms.hashCode();
     }
 
-    public Board get(int index) {
-        return boards.get(index);
+    public Room get(int index) {
+        return rooms.get(index);
     }
 
-    public Board set(int index, Board element) {
-        return boards.set(index, element);
+    public Room set(int index, Room element) {
+        return rooms.set(index, element);
     }
 
-    public void add(int index, Board element) {
-        boards.add(index, element);
+    public void add(int index, Room element) {
+        rooms.add(index, element);
     }
 
-    public Board remove(int index) {
-        return boards.remove(index);
+    public Room remove(int index) {
+        return rooms.remove(index);
     }
 
     public int indexOf(Object o) {
-        return boards.indexOf(o);
+        return rooms.indexOf(o);
     }
 
     public int lastIndexOf(Object o) {
-        return boards.lastIndexOf(o);
+        return rooms.lastIndexOf(o);
     }
 
-    public ListIterator<Board> listIterator() {
-        return boards.listIterator();
+    public ListIterator<Room> listIterator() {
+        return rooms.listIterator();
     }
 
-    public ListIterator<Board> listIterator(int index) {
-        return boards.listIterator(index);
+    public ListIterator<Room> listIterator(int index) {
+        return rooms.listIterator(index);
     }
 
-    public List<Board> subList(int fromIndex, int toIndex) {
-        return boards.subList(fromIndex, toIndex);
+    public List<Room> subList(int fromIndex, int toIndex) {
+        return rooms.subList(fromIndex, toIndex);
     }
 
-    public Spliterator<Board> spliterator() {
-        return boards.spliterator();
+    public Spliterator<Room> spliterator() {
+        return rooms.spliterator();
     }
 
     public static <E> List<E> of() {
@@ -188,22 +188,22 @@ public class BoardWarehouse {
     }
 
     public <T> T[] toArray(IntFunction<T[]> generator) {
-        return boards.toArray(generator);
+        return rooms.toArray(generator);
     }
 
-    public boolean removeIf(Predicate<? super Board> filter) {
-        return boards.removeIf(filter);
+    public boolean removeIf(Predicate<? super Room> filter) {
+        return rooms.removeIf(filter);
     }
 
-    public Stream<Board> stream() {
-        return boards.stream();
+    public Stream<Room> stream() {
+        return rooms.stream();
     }
 
-    public Stream<Board> parallelStream() {
-        return boards.parallelStream();
+    public Stream<Room> parallelStream() {
+        return rooms.parallelStream();
     }
 
-    public void forEach(Consumer<? super Board> action) {
-        boards.forEach(action);
+    public void forEach(Consumer<? super Room> action) {
+        rooms.forEach(action);
     }
 }

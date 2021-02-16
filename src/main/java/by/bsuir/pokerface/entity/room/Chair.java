@@ -1,4 +1,4 @@
-package by.bsuir.pokerface.entity.board;
+package by.bsuir.pokerface.entity.room;
 
 import by.bsuir.pokerface.entity.user.User;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
