@@ -6,11 +6,8 @@ import by.bsuir.pokerface.entity.room.RoomStateStorage;
 
 public class WaitingState implements RoomState {
     @Override
-    public void action(Room room) {
-    }
-
-    @Override
-    public void end(Room room) {
+    public void onStart(Room room) {
+        room.clearCards();
     }
 
     @Override

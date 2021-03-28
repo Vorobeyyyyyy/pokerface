@@ -3,16 +3,21 @@ package by.bsuir.pokerface.entity.user;
 import by.bsuir.pokerface.entity.card.Card;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.servlet.http.HttpSession;
-
-public class Player extends User {
+public class Player {
+    private String nickname;
     private SseEmitter emitter;
-    private HttpSession session;
     private Card[] cards;
+    private boolean folded;
+    private int bank;
+    private int bet;
 
-    public Player(SseEmitter emitter, HttpSession session) {
+    public Player(String nickname, SseEmitter emitter) {
+        this.nickname = nickname;
         this.emitter = emitter;
-        this.session = session;
+    }
+
+    public Player(SseEmitter emitter) {
+        this.emitter = emitter;
     }
 
     public SseEmitter getEmitter() {
@@ -23,12 +28,12 @@ public class Player extends User {
         this.emitter = emitter;
     }
 
-    public HttpSession getSession() {
-        return session;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setSession(HttpSession session) {
-        this.session = session;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public Card[] getCards() {
@@ -37,5 +42,30 @@ public class Player extends User {
 
     public void setCards(Card[] cards) {
         this.cards = cards;
+    }
+
+    public boolean isFolded() {
+        return folded;
+    }
+
+    public void setFolded(boolean folded) {
+        this.folded = folded;
+    }
+
+    public int getBank() {
+        return bank;
+    }
+
+    public void setBank(int bank) {
+        this.bank = bank;
+    }
+
+
+    public int getBet() {
+        return bet;
+    }
+
+    public void setBet(int bet) {
+        this.bet = bet;
     }
 }

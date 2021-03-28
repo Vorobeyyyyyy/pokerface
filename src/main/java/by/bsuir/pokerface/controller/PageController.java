@@ -12,4 +12,9 @@ public class PageController {
     public String getMainPage() {
         return "main.html";
     }
+
+    @GetMapping("test")
+    public String test(){
+        return "test/test.html";
+    }
 }

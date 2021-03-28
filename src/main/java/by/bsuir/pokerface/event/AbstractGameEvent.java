@@ -1,4 +1,5 @@
 package by.bsuir.pokerface.event;
 
-public class AbstractGameEvent {
+public abstract class AbstractGameEvent {
+    public String event;
 }

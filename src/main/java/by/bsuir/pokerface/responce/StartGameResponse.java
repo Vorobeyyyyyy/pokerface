@@ -1,4 +1,4 @@
 package by.bsuir.pokerface.responce;
 
-public class StartGameResponse {
+public class StartGameResponse extends AbstractResponse {
 }

@@ -45,21 +45,3 @@ async function connect() {
   })
   let message = await response.json()
 }
-
-initListener = () => {
-   const eventSource = new EventSource("http://localhost:8080/board/socket/1");
-
-   eventSource.onopen = (e) => console.log("open");
-
-   eventSource.onerror = (e) => {
-      if (e.readyState === EventSource.CLOSED) {
-         console.log("close");
-      } else {
-         console.log(e);
-      }
-   };
-
-   eventSource.onmessage = function (event) {
-      console.log(event.data)
-   }
-};

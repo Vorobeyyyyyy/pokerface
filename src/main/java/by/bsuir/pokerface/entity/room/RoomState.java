@@ -1,11 +1,13 @@
 package by.bsuir.pokerface.entity.room;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public interface RoomState {
-    default void action(Room room) {}
+    Logger logger = LogManager.getLogger();
+    default void onStart(Room room) {}
 
-    default void start(Room room) {}
-
-    default void end(Room room) {}
-
-    default RoomState nextState() {return RoomStateStorage.WAITING;}
+    default RoomState nextState() {
+        return RoomStateStorage.WAITING;}
 }
