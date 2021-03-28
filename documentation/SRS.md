@@ -32,7 +32,7 @@
 * [Angular](https://angular.io/) - открытая и свободная платформа для разработки веб-приложений, написанная на языке TypeScript.
 * [MySQL](https://www.mysql.com/) - cамая популярная в мире база данных с открытым исходным кодом.
 #### 2.2. Интерфейс пользователя <a name="2.2"></a>
-Графический интерфейс проекта представлен с помощью мокапов [главного меню](https://github.com/Vorobeyyyyyy/pokerface/documentation/mockups/mainMenu.png), [меню создания комнаты](https://github.com/Vorobeyyyyyy/pokerface/documentation/mockups/createRoom.png), [меню присоединения к комнате](https://github.com/Vorobeyyyyyy/pokerface/documentation/mockups/connectRoom.png) и [игровое поле](https://github.com/Vorobeyyyyyy/pokerface/documentation/mockups/gameSpace.png).
+Графический интерфейс проекта представлен с помощью мокапов [главного меню](https://github.com/Vorobeyyyyyy/pokerface/blob/master/documentation/mockups/mainMenu.png), [меню создания комнаты](https://github.com/Vorobeyyyyyy/pokerface/blob/master/documentation/mockups/createRoom.png), [меню присоединения к комнате](https://github.com/Vorobeyyyyyy/pokerface/blob/master/documentation/mockups/connectRoom.png) и [игровое поле](https://github.com/Vorobeyyyyyy/pokerface/blob/master/documentation/mockups/gameSpace.png).
 #### 2.3. Характеристики пользователей <a name="2.3"></a>
 Целевой аудиторией являются пользователи веб-браузеров, интересующиеся игрой в покер.
 ### 3. Системные требования <a name="3"></a>
