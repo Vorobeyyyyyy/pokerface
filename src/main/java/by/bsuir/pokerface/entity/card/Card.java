@@ -4,6 +4,11 @@ public class Card{
     private Suit suit;
     private Value value;
 
+    @Deprecated(forRemoval = true)
+    public Card(String s) {
+
+    }
+
     public Card(Suit suit, Value value) {
         this.suit = suit;
         this.value = value;

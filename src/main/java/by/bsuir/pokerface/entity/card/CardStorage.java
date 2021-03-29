@@ -14,6 +14,6 @@ public class CardStorage {
     }
 
     public static List<Card> getCards() {
-        return List.copyOf(CARDS);
+        return new ArrayList<>(CARDS);
     }
 }

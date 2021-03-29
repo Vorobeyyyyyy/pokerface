@@ -1,10 +1,9 @@
 package by.bsuir.pokerface.entity.card;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Deck {
-    private List<Card> cards = new ArrayList<>();
+    private List<Card> cards;
 
     public Deck() {
         cards = CardStorage.getCards();
@@ -16,6 +15,10 @@ public class Deck {
 
     public void setCards(List<Card> cards) {
         this.cards = cards;
+    }
+
+    public Card takeTopCard() {
+        return cards.remove(cards.size() - 1);
     }
 
     @Override

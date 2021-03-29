@@ -8,6 +8,7 @@ public class Player {
     private SseEmitter emitter;
     private Card[] cards;
     private boolean folded;
+    private boolean makeTurn;
     private int bank;
     private int bet;
 
@@ -67,5 +68,13 @@ public class Player {
 
     public void setBet(int bet) {
         this.bet = bet;
+    }
+
+    public boolean isMakeTurn() {
+        return makeTurn;
+    }
+
+    public void setMakeTurn(boolean makeTurn) {
+        this.makeTurn = makeTurn;
     }
 }

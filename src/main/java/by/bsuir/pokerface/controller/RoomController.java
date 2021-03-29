@@ -42,7 +42,7 @@ public class RoomController {
         } catch (ServiceException exception) {
             logger.log(Level.ERROR, exception);
         }
-        return "main.html";
+        return "test/test";
     }
 
     @PostMapping(value = "create")

@@ -6,7 +6,7 @@ roomId2 = document.getElementById('roomId2')
 raiseValue = document.getElementById('raiseValue')
 
 function login() {
-    var url = "http://localhost:8080/login";
+    var url = "http://localhost:8080/user/login";
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url);
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -21,7 +21,7 @@ function login() {
 }
 
 function getLogin() {
-    var url = "http://localhost:8080/getLogin";
+    var url = "http://localhost:8080/user/getLogin";
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url);
     xhr.setRequestHeader("Content-Type", "application/json");

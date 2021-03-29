@@ -22,7 +22,7 @@ public class GameServiceImpl implements GameService {
         if (!isPlayerTurn(room, player)) {
             throw new ServiceException("Not turn of player " + player.getNickname());
         }
-        if (room.getExecutor().getBet() != 0) {
+        if (room.getExecutor().getBet() != player.getBet()) {
             throw new ServiceException("Cant check");
         }
         room.getExecutor().check(player);

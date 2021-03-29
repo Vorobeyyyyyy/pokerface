@@ -10,9 +10,9 @@ import by.bsuir.pokerface.event.impl.AddBoardCard;
 public class TurnState implements RoomState {
     @Override
     public void onStart(Room room) {
-        Card card = new Card("turn");
+        Card card = room.getExecutor().getDeck().takeTopCard();
         room.addCard(card);
-        RoomNotifier.notifyPlayers(room, new AddBoardCard(card.getCard()));
+        RoomNotifier.notifyPlayers(room, new AddBoardCard(card));
     }
 
     @Override

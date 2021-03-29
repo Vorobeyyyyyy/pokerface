@@ -34,4 +34,31 @@ public class Combination {
     public void setStrength(int strength) {
         this.strength = strength;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Combination that = (Combination) o;
+
+        if (strength != that.strength) return false;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + strength;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Combination{");
+        sb.append("type=").append(type);
+        sb.append(", strength=").append(strength);
+        sb.append('}');
+        return sb.toString();
+    }
 }

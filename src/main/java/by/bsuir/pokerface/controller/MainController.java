@@ -11,11 +11,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user")
 public class MainController {
     private final static Logger logger = LogManager.getLogger();
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public void login(@RequestBody LoginRequest request, HttpSession session) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         Player player = new Player(request.nickname, emitter);
@@ -23,7 +23,7 @@ public class MainController {
         logger.log(Level.INFO, player.getNickname());
     }
 
-    @PostMapping("getLogin")
+    @PostMapping("/getLogin")
     public String getLogin(HttpSession session) {
         Player player = (Player)session.getAttribute(SessionAttributeName.PLAYER);
         logger.log(Level.INFO, player.getNickname());

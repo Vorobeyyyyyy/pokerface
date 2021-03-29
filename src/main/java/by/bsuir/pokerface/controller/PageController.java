@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class PageController {
 
-    @GetMapping("main")
+    @GetMapping("/main")
     public String getMainPage() {
         return "main.html";
     }
 
-    @GetMapping("test")
+    @GetMapping("/test")
     public String test(){
         return "test/test.html";
     }

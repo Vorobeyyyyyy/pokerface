@@ -18,7 +18,7 @@ public class RoomNotifier {
             SseEmitter emitter = player.getEmitter();
             try {
                 emitter.send(event);
-                logger.log(Level.INFO, "Send {} to {} in room {}", event, player.getNickname(), room.getId());
+                logger.log(Level.DEBUG, "Send {} to {} in room {}", event, player.getNickname(), room.getId());
             } catch (IOException exception) {
                 logger.log(Level.ERROR, "Error when sending {} to {} in room {}", event.getClass().toString(), player.getNickname(), room.getId());
                 room.removePlayer(player);
@@ -35,7 +35,7 @@ public class RoomNotifier {
         SseEmitter emitter = player.getEmitter();
         try {
             emitter.send(event);
-            logger.log(Level.INFO, "Send {} to {} in room {}", event, player.getNickname(), room.getId());
+            logger.log(Level.DEBUG, "Send {} to {} in room {}", event, player.getNickname(), room.getId());
         } catch (IOException exception) {
             logger.log(Level.ERROR, "Error when sending {} to {} in room {}", event.getClass().toString(), player.getNickname(), room.getId());
             room.removePlayer(player);

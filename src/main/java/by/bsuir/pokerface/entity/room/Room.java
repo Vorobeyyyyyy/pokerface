@@ -3,8 +3,6 @@ package by.bsuir.pokerface.entity.room;
 import by.bsuir.pokerface.entity.card.Card;
 import by.bsuir.pokerface.entity.user.Player;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,8 +13,6 @@ public class Room {
     public final static int ROOM_SIZE = 8;
     private final static int CARD_COUNT = 8;
 
-    @Id
-    @GeneratedValue
     private int id;
     private final String name;
     private final List<Player> players = new ArrayList<>();

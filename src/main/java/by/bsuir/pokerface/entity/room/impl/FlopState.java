@@ -13,9 +13,9 @@ public class FlopState implements RoomState {
     @Override
     public void onStart(Room room) {
         for (int i = 0; i < FLOP_CARD_COUNT; i++) {
-            Card card = new Card("karta" + i);
+            Card card = room.getExecutor().getDeck().takeTopCard();
             room.addCard(card);
-            RoomNotifier.notifyPlayers(room, new AddBoardCard(card.getCard()));
+            RoomNotifier.notifyPlayers(room, new AddBoardCard(card));
         }
     }
 

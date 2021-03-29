@@ -7,6 +7,9 @@ import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.factory.CombinationFactory;
 import by.bsuir.pokerface.factory.CombinationFactoryProvider;
 import by.bsuir.pokerface.service.CardService;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,12 +17,20 @@ import java.util.List;
 import java.util.Optional;
 
 public class CardServiceImpl implements CardService {
-    private static final int PLAYER_CARDS_COUNT = 3;
+    private final static Logger logger = LogManager.getLogger();
+
+    private static final int PLAYER_CARDS_COUNT = 2;
     private static final int BOARD_CARDS_COUNT = 5;
+
+    private static final CardServiceImpl INSTANCE = new CardServiceImpl();
+    public static CardServiceImpl getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public void shuffle(Deck deck) {
         Collections.shuffle(deck.getCards());
+        logger.log(Level.INFO, "Shuffling deck {}", deck);
     }
 
     @Override

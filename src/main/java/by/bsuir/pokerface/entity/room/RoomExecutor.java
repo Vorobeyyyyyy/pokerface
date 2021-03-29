@@ -1,5 +1,6 @@
 package by.bsuir.pokerface.entity.room;
 
+import by.bsuir.pokerface.entity.card.Deck;
 import by.bsuir.pokerface.entity.user.Player;
 import by.bsuir.pokerface.event.impl.*;
 import org.apache.logging.log4j.Level;
@@ -7,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Objects;
 
 public class RoomExecutor implements Runnable {
     private static final Logger logger = LogManager.getLogger();
@@ -22,7 +24,7 @@ public class RoomExecutor implements Runnable {
     private int timeToTurn = INITIAL_TURN_TIME;
     private int pauseTime = 0;
     private boolean firstTurn = true;
-
+    private Deck deck = new Deck();
 
     public RoomExecutor(Room room) {
         this.room = room;
@@ -30,34 +32,25 @@ public class RoomExecutor implements Runnable {
 
     @Override
     public void run() {
-        logger.log(Level.INFO, "1");
         if (pauseTime > 0) {
             pauseTime--;
             return;
         }
 
-        logger.log(Level.INFO, "2");
         if (room.getRoomState() == RoomStateStorage.WAITING) {
             nextState();
             pauseTime = 1;
             return;
         }
 
-        logger.log(Level.INFO, "3");
         if (nextChair() == currentChair) {
             win(room.getSitedPlayers().get(currentChair));
         }
 
-        if (currentChair == lastRaised) {
-            nextState();
-        }
-
-        logger.log(Level.INFO, "4");
         if (timeToTurn <= 0) {
             fold(room.getSitedPlayers().get(currentChair));
         }
 
-        logger.log(Level.INFO, "5");
         timeToTurn--;
         TurnTimeEvent event = new TurnTimeEvent(currentChair, timeToTurn);
         RoomNotifier.notifyPlayers(room, event);
@@ -70,7 +63,7 @@ public class RoomExecutor implements Runnable {
     }
 
     public void check(Player player) {
-        if (bet != 0) {
+        if (bet != player.getBet()) {
             return;
         }
         RoomNotifier.notifyPlayers(room, new PlayerCheckEvent(currentChair, player.getBank()));
@@ -79,28 +72,32 @@ public class RoomExecutor implements Runnable {
 
     public void call(Player player) {
         int playerBank = player.getBank();
-        int callValue = bet;
+        int callValue = bet - player.getBet();
         if (playerBank >= callValue) {
             player.setBank(playerBank - callValue);
             pot += callValue;
         }
+        logger.log(Level.INFO, "Chair {} called", room.getSitedPlayers().indexOf(player));
         RoomNotifier.notifyPlayers(room, new PlayerCallEvent(currentChair, player.getBank()));
         RoomNotifier.notifyPlayers(room, new RoomPotEvent(pot));
         endTurn();
     }
 
     public void raise(Player player, int value) {
-        if (value <= bet) {
+        int playerBank = player.getBank();
+        value -= player.getBet();
+        if (value <= bet || playerBank < value) {
             return;
         }
-        int playerBank = player.getBank();
-        if (playerBank >= value) {
-            bet = value;
-            pot += value;
-            player.setBet(player.getBet() + value);
-            player.setBank(playerBank - value);
+
+        bet = value;
+        pot += value;
+        player.setBet(player.getBet() + value);
+        player.setBank(playerBank - value);
+        if (!firstTurn) {
             lastRaised = currentChair;
         }
+        room.getSitedPlayers().stream().filter(Objects::nonNull).forEach(p -> p.setMakeTurn(false));
         logger.log(Level.INFO, "Chair {} raised", room.getSitedPlayers().indexOf(player));
         RoomNotifier.notifyPlayers(room, new RoomPotEvent(pot));
         RoomNotifier.notifyPlayers(room, new PlayerRaiseEvent(currentChair, value, player.getBank()));
@@ -108,20 +105,21 @@ public class RoomExecutor implements Runnable {
     }
 
     private void endTurn() {
-        currentChair = nextChair();
-        logger.log(Level.INFO, "Current chair {}, firstTurn = {}", currentChair, firstTurn);
-
-        if (currentChair == currentButton && !firstTurn) {
-            nextState();
+        if (!firstTurn) {
+            room.getSitedPlayers().get(currentChair).setMakeTurn(true);
         } else {
             firstTurn = false;
         }
-
-
+        currentChair = nextChair();
+        logger.log(Level.INFO, "Current chair {}, firstTurn = {}, lastRaised = {}", currentChair, firstTurn, lastRaised);
+        if (isAllMakeTurn()) {
+            nextState();
+        }
         timeToTurn = INITIAL_TURN_TIME;
     }
 
     private void nextState() {
+        room.getSitedPlayers().stream().filter(Objects::nonNull).forEach(player -> player.setMakeTurn(false));
         firstTurn = true;
         currentChair = currentButton;
         bet = 0;
@@ -158,6 +156,10 @@ public class RoomExecutor implements Runnable {
                 p.setFolded(false);
             }
         });
+    }
+
+    private boolean isAllMakeTurn() {
+        return room.getSitedPlayers().stream().filter(Objects::nonNull).allMatch(Player::isMakeTurn);
     }
 
     public Room getRoom() {
@@ -222,5 +224,13 @@ public class RoomExecutor implements Runnable {
 
     public void setBet(int bet) {
         this.bet = bet;
+    }
+
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
     }
 }
