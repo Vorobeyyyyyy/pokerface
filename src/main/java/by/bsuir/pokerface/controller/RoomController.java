@@ -33,18 +33,6 @@ public class RoomController {
         return player.getEmitter();
     }
 
-    @GetMapping("id{roomId}")
-    public String enterRoom(@PathVariable(value = "roomId") int roomId, HttpSession session) {
-        Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
-        try {
-            ROOM_SERVICE.enterRoom(roomId, player);
-            session.setAttribute(SessionAttributeName.ROOM_ID, roomId);
-        } catch (ServiceException exception) {
-            logger.log(Level.ERROR, exception);
-        }
-        return "test/test";
-    }
-
     @PostMapping(value = "create")
     @ResponseBody
     public CreateRoomResponse createRoom(@RequestBody CreateRoomRequest request) throws ControllerException {
