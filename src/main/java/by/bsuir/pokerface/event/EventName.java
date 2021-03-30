@@ -15,4 +15,6 @@ public class EventName {
     public static final String PLAYER_WIN = "PlayerWin";
     public static final String ROOM_POT = "RoomPot";
     public static final String ADD_BOARD_CARD = "AddBoardCard";
+    public static final String PLAYER_COMBINATION = "PlayerCombination";
+    public static final String ROOM_STATE = "RoomState";
 }

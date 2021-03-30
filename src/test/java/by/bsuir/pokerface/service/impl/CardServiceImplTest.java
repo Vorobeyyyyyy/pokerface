@@ -4,10 +4,12 @@ import by.bsuir.pokerface.entity.card.Card;
 import by.bsuir.pokerface.entity.card.Combination;
 import by.bsuir.pokerface.entity.card.Suit;
 import by.bsuir.pokerface.entity.card.Value;
+import by.bsuir.pokerface.entity.user.Player;
 import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.service.CardService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -18,12 +20,15 @@ public class CardServiceImplTest {
     private final CardService cardService = CardServiceImpl.getInstance();
 
     @Test
-    public void testFindBestCombination() {
+    public void testFindBestCombination() throws JsonProcessingException {
+        Player player = new Player("S", false, 2,1);
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writeValueAsString(player));
         List<Card> cards = List.of(
                 new Card(Suit.CLUB, Value.KING),
                 new Card(Suit.DIAMOND, Value.TEN),
-                new Card(Suit.HEART, Value.FIVE),
-                new Card(Suit.SPADE, Value.TWO),
+                new Card(Suit.HEART, Value.TEN),
+                new Card(Suit.SPADE, Value.TEN),
                 new Card(Suit.SPADE, Value.THREE),
                 new Card(Suit.SPADE, Value.NINE),
                 new Card(Suit.CLUB, Value.QUEEN)

@@ -30,6 +30,7 @@ public class RoomController {
     @GetMapping("getEmitter")
     public SseEmitter takeSseEmitter(HttpSession session) {
         Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
+        logger.log(Level.INFO, "Player {} get his emitter ({})", player.getNickname(), player.getEmitter());
         return player.getEmitter();
     }
 
@@ -57,6 +58,7 @@ public class RoomController {
         try {
             ROOM_SERVICE.sitDown(roomId, request.chairId, player);
         } catch (ServiceException exception) {
+            logger.log(Level.ERROR, exception);
             throw new ControllerException(exception);
         }
         return new ResponseWithStatus("ok");

@@ -3,13 +3,14 @@ package by.bsuir.pokerface.service.impl;
 import by.bsuir.pokerface.dao.RoomDao;
 import by.bsuir.pokerface.dao.impl.RoomDaoImpl;
 import by.bsuir.pokerface.entity.room.Room;
-import by.bsuir.pokerface.entity.room.RoomExecutor;
 import by.bsuir.pokerface.entity.user.Player;
 import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.service.GameService;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class GameServiceImpl implements GameService {
@@ -22,7 +23,7 @@ public class GameServiceImpl implements GameService {
         if (!isPlayerTurn(room, player)) {
             throw new ServiceException("Not turn of player " + player.getNickname());
         }
-        if (room.getExecutor().getBet() != player.getBet()) {
+        if (room.getBet() != player.getBet()) {
             throw new ServiceException("Cant check");
         }
         room.getExecutor().check(player);
@@ -43,8 +44,10 @@ public class GameServiceImpl implements GameService {
         if (!isPlayerTurn(room, player)) {
             throw new ServiceException("Not turn of player " + player.getNickname());
         }
-        if (player.getBank() <= value) {
-            throw new ServiceException("Not enough, player " + player.getNickname() + " have " + player.getBank() + ", and try to raise " + value);
+        int maxRaise = room.getSitedPlayers().stream().filter(Objects::nonNull).filter(p -> !p.isFolded()).mapToInt(p -> p.getBet() + p.getBank()).min().orElse(0);
+        logger.log(Level.INFO, "Max raise: {}", maxRaise);
+        if (value > maxRaise) {
+            throw new ServiceException("Cant raise, max raise is %s, but %s provided".formatted(maxRaise, value));
         }
         room.getExecutor().raise(player, value);
     }
@@ -59,8 +62,7 @@ public class GameServiceImpl implements GameService {
     }
 
     private boolean isPlayerTurn(Room room, Player player) {
-        RoomExecutor executor = room.getExecutor();
-        int chair = executor.getCurrentChair();
+        int chair = room.getCurrentChair();
         return room.getSitedPlayers().get(chair) == player;
     }
 

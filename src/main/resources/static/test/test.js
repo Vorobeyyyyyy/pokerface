@@ -50,7 +50,7 @@ function createRoom() {
 }
 
 function enterRoom() {
-    var url = "http://localhost:8080/room/id" + roomId.value;
+    var url = "http://localhost:8080/id" + roomId.value;
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url);
     xhr.onreadystatechange = function () {

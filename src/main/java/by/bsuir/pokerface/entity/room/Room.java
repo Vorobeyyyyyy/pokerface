@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Room {
     public final static Integer INVALID_ROOM_ID = -1;
     public final static int ROOM_SIZE = 8;
-    private final static int CARD_COUNT = 8;
+    private final static int CARD_COUNT = 5;
 
     private int id;
     private final String name;
@@ -19,6 +19,10 @@ public class Room {
     private final Player[] chairs = new Player[ROOM_SIZE];
     private final Card[] cards = new Card[CARD_COUNT];
     private RoomState roomState = RoomStateStorage.WAITING;
+    private int currentButton;
+    private int currentChair;
+    private int bet = 0;
+    private int pot = 0;
     private final RoomExecutor executor = new RoomExecutor(this);
 
     public Room(String name) {
@@ -82,6 +86,7 @@ public class Room {
         for (int i = 0; i < cards.length; i++) {
             if (cards[i] == null) {
                 cards[i] = card;
+                break;
             }
         }
     }
@@ -125,5 +130,37 @@ public class Room {
         sb.append(", roomState=").append(roomState);
         sb.append('}');
         return sb.toString();
+    }
+
+    public int getCurrentButton() {
+        return currentButton;
+    }
+
+    public void setCurrentButton(int currentButton) {
+        this.currentButton = currentButton;
+    }
+
+    public int getCurrentChair() {
+        return currentChair;
+    }
+
+    public void setCurrentChair(int currentChair) {
+        this.currentChair = currentChair;
+    }
+
+    public int getBet() {
+        return bet;
+    }
+
+    public void setBet(int bet) {
+        this.bet = bet;
+    }
+
+    public int getPot() {
+        return pot;
+    }
+
+    public void setPot(int pot) {
+        this.pot = pot;
     }
 }

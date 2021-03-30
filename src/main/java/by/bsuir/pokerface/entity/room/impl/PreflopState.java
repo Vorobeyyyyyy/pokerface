@@ -20,10 +20,10 @@ public class PreflopState implements RoomState {
 
         executor.setDeck(new Deck());
         cardService.shuffle(executor.getDeck());
-        executor.setCurrentChair(0);
-        executor.setCurrentButton(executor.nextChair());
-        executor.setCurrentChair(executor.getCurrentButton());
-        executor.raise(room.getSitedPlayers().get(executor.getCurrentChair()), executor.getCurrentBlind());
+        room.setCurrentChair(0);
+        room.setCurrentButton(executor.nextChair());
+        room.setCurrentChair(room.getCurrentButton());
+        executor.raise(room.getSitedPlayers().get(room.getCurrentChair()), executor.getCurrentBlind());
 
         for (int i = 0; i < room.getSitedPlayers().size(); i++) {
             Player player = room.getSitedPlayers().get(i);

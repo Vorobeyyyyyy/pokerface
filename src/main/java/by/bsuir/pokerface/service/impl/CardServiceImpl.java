@@ -36,7 +36,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public Combination findBestCombination(List<Card> playerCards, List<Card> boardCards) throws ServiceException {
         if (playerCards.size() != PLAYER_CARDS_COUNT || boardCards.size() != BOARD_CARDS_COUNT) {
-            throw new ServiceException("Wrong cards count");
+            throw new ServiceException("Wrong cards count(playerCards = %s, boardCards = %s)".formatted(playerCards.size(), boardCards.size()));
         }
         List<Card> cards = new ArrayList<>();
         cards.addAll(playerCards);
@@ -48,6 +48,8 @@ public class CardServiceImpl implements CardService {
         do {
             optionalCombination = combinationFactories[i++].createCombination(cards);
         } while (optionalCombination.isEmpty() && i < combinationFactories.length);
-        return optionalCombination.orElseThrow(() -> new ServiceException("Cant define combination"));
+        Combination combination = optionalCombination.orElseThrow(() -> new ServiceException("Cant define combination"));
+        logger.log(Level.ERROR, "From cards {} combination {}", cards, combination);
+        return combination;
     }
 }

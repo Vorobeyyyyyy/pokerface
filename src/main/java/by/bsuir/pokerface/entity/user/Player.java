@@ -1,8 +1,13 @@
 package by.bsuir.pokerface.entity.user;
 
 import by.bsuir.pokerface.entity.card.Card;
+import by.bsuir.pokerface.entity.card.Combination;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@JsonIgnoreProperties({"emitter", "cards", "makeTurn", "combination"})
 public class Player {
     private String nickname;
     private SseEmitter emitter;
@@ -11,10 +16,18 @@ public class Player {
     private boolean makeTurn;
     private int bank;
     private int bet;
+    private Combination combination;
 
     public Player(String nickname, SseEmitter emitter) {
         this.nickname = nickname;
         this.emitter = emitter;
+    }
+
+    public Player(String nickname, boolean folded, int bank, int bet) {
+        this.nickname = nickname;
+        this.folded = folded;
+        this.bank = bank;
+        this.bet = bet;
     }
 
     public Player(SseEmitter emitter) {
@@ -76,5 +89,13 @@ public class Player {
 
     public void setMakeTurn(boolean makeTurn) {
         this.makeTurn = makeTurn;
+    }
+
+    public Combination getCombination() {
+        return combination;
+    }
+
+    public void setCombination(Combination combination) {
+        this.combination = combination;
     }
 }
