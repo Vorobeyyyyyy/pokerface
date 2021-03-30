@@ -2,14 +2,15 @@ package by.bsuir.pokerface.entity.room;
 
 import by.bsuir.pokerface.entity.card.Card;
 import by.bsuir.pokerface.entity.user.Player;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@JsonIgnoreProperties({"roomState", "executor", "ROOM_SIZE", "CARD_COUNT"})
 public class Room {
-    public final static Integer INVALID_ROOM_ID = -1;
     public final static int ROOM_SIZE = 8;
     private final static int CARD_COUNT = 5;
 
@@ -35,7 +36,6 @@ public class Room {
 
     public void removePlayer(Player player) {
         players.remove(player);
-
     }
 
     public void sitDown(Player player, int chairId) {

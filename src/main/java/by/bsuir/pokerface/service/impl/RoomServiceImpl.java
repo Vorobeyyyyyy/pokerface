@@ -39,11 +39,19 @@ public class RoomServiceImpl implements RoomService {
         }
         room.addPlayer(player);
         SseEmitter emitter = player.getEmitter();
-        Runnable callback = () -> room.removePlayer(player);
+        Runnable callback = () -> {
+            try {
+                leaveRoom(roomId, player);
+            } catch (ServiceException exception) {
+                logger.log(Level.ERROR, exception.getMessage());
+            }
+        };
         emitter.onCompletion(callback);
         emitter.onTimeout(callback);
-        PlayerJoinEvent event = new PlayerJoinEvent(player.getNickname());
-        RoomNotifier.notifyPlayers(room, event);
+        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(player.getNickname());
+        RoomStateEvent roomStateEvent = new RoomStateEvent(room);
+        RoomNotifier.notifyPlayers(room, playerJoinEvent);
+        RoomNotifier.notifySinglePlayer(player, roomStateEvent);
         logger.log(Level.INFO, "Player {} entered room {}", player.getNickname(), roomId);
     }
 

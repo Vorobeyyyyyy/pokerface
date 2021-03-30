@@ -4,6 +4,7 @@ import by.bsuir.pokerface.entity.card.Card;
 import by.bsuir.pokerface.entity.card.Combination;
 import by.bsuir.pokerface.entity.card.Suit;
 import by.bsuir.pokerface.entity.card.Value;
+import by.bsuir.pokerface.entity.room.Room;
 import by.bsuir.pokerface.entity.user.Player;
 import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.service.CardService;
@@ -21,9 +22,9 @@ public class CardServiceImplTest {
 
     @Test
     public void testFindBestCombination() throws JsonProcessingException {
-        Player player = new Player("S", false, 2,1);
+        Room room = new Room("SSd");
         ObjectMapper mapper = new ObjectMapper();
-        System.out.println(mapper.writeValueAsString(player));
+        System.out.println(mapper.writeValueAsString(room));
         List<Card> cards = List.of(
                 new Card(Suit.CLUB, Value.KING),
                 new Card(Suit.DIAMOND, Value.TEN),
