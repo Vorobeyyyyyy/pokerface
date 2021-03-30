@@ -45,7 +45,12 @@ public class RoomExecutor implements Runnable {
         }
 
         if (timeToTurn <= 0) {
-            fold(room.getSitedPlayers().get(room.getCurrentChair()));
+            Player player = room.getSitedPlayers().get(room.getCurrentChair());
+            if (room.getBet() <= player.getBet()) {
+                check(player);
+            } else {
+                fold(player);
+            }
         }
 
         timeToTurn--;
@@ -63,7 +68,7 @@ public class RoomExecutor implements Runnable {
         if (room.getBet() != player.getBet()) {
             return;
         }
-        RoomNotifier.notifyPlayers(room, new PlayerCheckEvent(room.getCurrentChair(),player.getBank(), player.getBank()));
+        RoomNotifier.notifyPlayers(room, new PlayerCheckEvent(room.getCurrentChair(), player.getBank(), player.getBank()));
         endTurn();
     }
 
