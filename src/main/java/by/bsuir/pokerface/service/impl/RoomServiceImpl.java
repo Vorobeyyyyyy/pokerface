@@ -61,9 +61,7 @@ public class RoomServiceImpl implements RoomService {
         emitter.onCompletion(callback);
         emitter.onTimeout(callback);
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(player.getNickname());
-        RoomStateEvent roomStateEvent = new RoomStateEvent(room);
         RoomNotifier.notifyPlayers(room, playerJoinEvent);
-        RoomNotifier.notifySinglePlayer(player, roomStateEvent);
         logger.log(Level.INFO, "Player {} entered room {}", player.getNickname(), roomId);
     }
 
@@ -123,10 +121,9 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void refreshRoom(int roomId, Player player) throws ServiceException {
+    public RoomStateEvent takeRoomStateEvent(int roomId, Player player) throws ServiceException {
         Room room = roomByIdOrThrow(roomId);
-        RoomStateEvent roomStateEvent = new RoomStateEvent(room, room.getExecutor().findChair(player), player.getCards());
-        RoomNotifier.notifySinglePlayer(player, roomStateEvent);
+        return new RoomStateEvent(room, room.getExecutor().findChair(player), player.getCards());
     }
 
     private Room roomByIdOrThrow(int roomId) throws ServiceException {

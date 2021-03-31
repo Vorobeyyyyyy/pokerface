@@ -2,6 +2,7 @@ package by.bsuir.pokerface.service;
 
 import by.bsuir.pokerface.entity.room.Room;
 import by.bsuir.pokerface.entity.user.Player;
+import by.bsuir.pokerface.event.impl.RoomStateEvent;
 import by.bsuir.pokerface.exception.ServiceException;
 
 public interface RoomService {
@@ -17,5 +18,5 @@ public interface RoomService {
 
     default void startGame(int roomId) throws ServiceException { }
 
-    default void refreshRoom(int roomId, Player player) throws ServiceException { }
+    RoomStateEvent takeRoomStateEvent(int roomId, Player player) throws ServiceException;
 }

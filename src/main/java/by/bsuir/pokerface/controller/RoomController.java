@@ -2,6 +2,8 @@ package by.bsuir.pokerface.controller;
 
 import by.bsuir.pokerface.entity.room.Room;
 import by.bsuir.pokerface.entity.user.Player;
+import by.bsuir.pokerface.event.AbstractGameEvent;
+import by.bsuir.pokerface.event.impl.RoomStateEvent;
 import by.bsuir.pokerface.exception.ControllerException;
 import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.request.impl.CreateRoomRequest;
@@ -33,17 +35,8 @@ public class RoomController {
     @GetMapping("getEmitter")
     public ResponseEntity<SseEmitter> takeSseEmitter(HttpSession session) {
         Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
-        Integer roomId = (Integer) session.getAttribute(SessionAttributeName.ROOM_ID);
         if (player == null) {
             return ResponseEntity.badRequest().build();
-        }
-        if (roomId != null) {
-            try {
-                ROOM_SERVICE.refreshRoom(roomId, player);
-            } catch (ServiceException exception) {
-                logger.log(Level.ERROR, exception.getMessage());
-                return ResponseEntity.badRequest().build();
-            }
         }
         logger.log(Level.INFO, "Player {} get his emitter ({})", player.getNickname(), player.getEmitter());
         return ResponseEntity.ok(player.getEmitter());
@@ -67,18 +60,20 @@ public class RoomController {
 
     @PostMapping(value = "enter")
     @ResponseBody
-    public AbstractResponse enterRoom(@RequestBody EnterRoomRequest request, HttpSession session) throws ControllerException {
+    public ResponseEntity<AbstractGameEvent> enterRoom(@RequestBody EnterRoomRequest request, HttpSession session) throws ControllerException {
         int roomId = request.roomId;
         Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
         logger.log(Level.INFO, "Player {} entering room {}", player.getNickname(), roomId);
+        RoomStateEvent event;
         try {
             ROOM_SERVICE.enterRoom(roomId, player);
+            event = ROOM_SERVICE.takeRoomStateEvent(roomId, player)
             session.setAttribute(SessionAttributeName.ROOM_ID, roomId);
         } catch (ServiceException exception) {
             logger.log(Level.ERROR, exception.getMessage());
-            return new ResponseWithStatus(exception.getMessage());
+            return ResponseEntity.badRequest().build();
         }
-        return new ResponseWithStatus("ok");
+        return ResponseEntity.ok(event);
     }
 
     @PostMapping(value = "sit")
