@@ -5,14 +5,14 @@ import by.bsuir.pokerface.entity.room.Room;
 import by.bsuir.pokerface.entity.room.RoomNotifier;
 import by.bsuir.pokerface.entity.room.RoomState;
 import by.bsuir.pokerface.entity.room.RoomStateStorage;
-import by.bsuir.pokerface.event.impl.AddBoardCard;
+import by.bsuir.pokerface.event.impl.AddBoardCardEvent;
 
 public class RiverState implements RoomState {
     @Override
     public void onStart(Room room) {
         Card card = room.getExecutor().getDeck().takeTopCard();
         room.addCard(card);
-        RoomNotifier.notifyPlayers(room, new AddBoardCard(card));
+        RoomNotifier.notifyPlayers(room, new AddBoardCardEvent(card));
     }
 
     @Override

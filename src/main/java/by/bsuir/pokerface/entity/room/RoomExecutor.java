@@ -112,6 +112,8 @@ public class RoomExecutor implements Runnable {
             firstTurn = false;
         }
         room.setCurrentChair(nextChair());
+        MaxRaiseEvent maxRaiseEvent = new MaxRaiseEvent(room.getBet(), room.getSitedPlayers().stream().filter(Objects::nonNull).mapToInt(Player::getBank).min().orElse(room.getBet()));
+        RoomNotifier.notifySinglePlayer(room, room.getCurrentChair(), maxRaiseEvent);
         logger.log(Level.INFO, "Current chair {}, firstTurn = {}", room.getCurrentChair(), firstTurn);
         if (isAllMakeTurn()) {
             nextState();
