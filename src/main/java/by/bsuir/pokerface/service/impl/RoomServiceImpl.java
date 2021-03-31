@@ -122,6 +122,12 @@ public class RoomServiceImpl implements RoomService {
         RoomNotifier.notifyPlayers(room, event);
     }
 
+    @Override
+    public void refreshRoom(int roomId, Player player) throws ServiceException {
+        Room room = roomByIdOrThrow(roomId);
+        RoomStateEvent roomStateEvent = new RoomStateEvent(room, room.getExecutor().findChair(player), player.getCards());
+        RoomNotifier.notifySinglePlayer(player, roomStateEvent);
+    }
 
     private Room roomByIdOrThrow(int roomId) throws ServiceException {
         Optional<Room> optionalRoom = ROOM_DAO.findRoomById(roomId);

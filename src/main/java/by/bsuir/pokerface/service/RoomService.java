@@ -17,4 +17,5 @@ public interface RoomService {
 
     default void startGame(int roomId) throws ServiceException { }
 
+    default void refreshRoom(int roomId, Player player) throws ServiceException { }
 }

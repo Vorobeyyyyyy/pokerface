@@ -33,8 +33,12 @@ public class RoomController {
     @GetMapping("getEmitter")
     public ResponseEntity<SseEmitter> takeSseEmitter(HttpSession session) {
         Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
+        Integer roomId = (Integer) session.getAttribute(SessionAttributeName.ROOM_ID);
         if (player == null) {
             return ResponseEntity.badRequest().build();
+        }
+        if (roomId != null) {
+
         }
         logger.log(Level.INFO, "Player {} get his emitter ({})", player.getNickname(), player.getEmitter());
         return ResponseEntity.ok(player.getEmitter());
