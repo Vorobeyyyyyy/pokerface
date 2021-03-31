@@ -69,7 +69,7 @@ public class RoomExecutor implements Runnable {
         if (room.getBet() != player.getBet()) {
             return;
         }
-        RoomNotifier.notifyPlayers(room, new PlayerCheckEvent(room.getCurrentChair(), player.getBank(), player.getBank()));
+        RoomNotifier.notifyPlayers(room, new PlayerCheckEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
         endTurn();
     }
 
