@@ -103,7 +103,7 @@ public class RoomExecutor implements Runnable {
         room.getSitedPlayers().stream().filter(Objects::nonNull).forEach(p -> p.setMakeTurn(false));
         logger.log(Level.INFO, "Chair {} raised", room.getSitedPlayers().indexOf(player));
         RoomNotifier.notifyPlayers(room, new RoomPotEvent(room.getPot()));
-        RoomNotifier.notifyPlayers(room, new PlayerRaiseEvent(room.getCurrentChair(), value, player.getBank()));
+        RoomNotifier.notifyPlayers(room, new PlayerRaiseEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
         endTurn();
     }
 
