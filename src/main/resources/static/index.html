@@ -1,10 +1,257 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+
+   <meta charset="UTF-8">
+   <title>Darkstone</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+   <link rel="stylesheet" href="css/style.css" type="text/css">
+   <link rel="stylesheet" href="css/mainMenuStyle.css" type="text/css">
+   <link rel="stylesheet" href="css/connectMenuStyle.css" type="text/css">
+   <link rel="stylesheet" href="css/createMenuStyle.css" type="text/css">
+   <link rel="stylesheet" href="css/descriptionMenuStyle.css" type="text/css">
+
 </head>
+
 <body>
 
+   <div>
+      <div class="game-title"> POKER </div>
+
+      <div class="dws-wrapper">
+         <section id="connect-menu-id-1" class="container-connect">
+            <div class="img-box-connect-menu" style="background-image: url(img/connectMenu/img_1.jpg)">
+               <span class="bor-left-right"></span>
+               <span class="bor-top-bottom"></span>
+               <div class="input-data nickname">
+                  <input type="text" required>
+                  <label>Псевдоним</label>
+               </div>
+               <div class="input-data room-id">
+                  <input type="text" required>
+                  <label>ID лобби</label>
+               </div>
+               <div>
+                  <a class="usl-btn" onclick="gotoMainMenu()" style="margin-left: 30px;">Назад</a>
+                  <a class="usl-btn" onclick="connect()">Подключиться</a>
+               </div>
+            </div>
+         </section>
+         <section id="create-menu-id-1" class="container-create">
+            <div class="img-box-create-menu" style="background-image: url(img/createMenu/img_1.jpg)">
+               <span class="bor-left-right"></span>
+               <span class="bor-top-bottom"></span>
+               <div class="input-data nickname" style="padding-top: 200px; padding-left: 165px;">
+                  <input type="text" required>
+                  <label style="padding-left: 165px;">Псевдоним</label>
+               </div>
+               <div class="input-data room-name" style="padding-top: 20px; padding-left: 165px;">
+                  <input type="text" required>
+                  <label style="padding-left: 165px;">Название комноты</label>
+               </div>
+               <div>
+                  <a class="usl-btn" onclick="gotoMainMenu()" style="margin-left: 165px;">Назад</a>
+                  <a class="usl-btn" onclick="createRoom()">Создать</a>
+               </div>
+            </div>
+         </section>
+         <section id="description-menu-id-1" class="container-discription">
+            <div id="slider" style="align-items: center;">
+               <input type="radio" name="slider" id="slide1" checked>
+               <input type="radio" name="slider" id="slide2">
+               <input type="radio" name="slider" id="slide3">
+               <input type="radio" name="slider" id="slide4">
+               <div id="slides">
+                  <div id="overflow">
+                     <div class="inner">
+                        <div class="slide slide_1" style="color: azure;">
+                           <p style="padding: 20px;">
+                              <b style="padding-left: 60px;">Правила игры в покер</b> – это первый шаг любого, кто
+                              только встал на путь изучения
+                              покера. Предлагаем прямо сейчас ознакомиться с классическими правилами Техасского
+                              покера. Комбинации и правила покера Техасский Холдем вы можете изучить с помощью
+                              видео от «Академии Покера». Ниже информация описана более подробно.
+                           </p>
+                           <p style="padding-left: 20px; padding-right: 20px;">
+                              Обладателем банка игры будет тот, у кого на руках окажется самая высокая комбинация из
+                              карт. Правила игры в покер предусматривают <b>10 возможных комбинаций</b>.
+                           </p>
+                           <p style="padding: 20px;">
+                              <b style="padding-left: 60px;">Правила игры в классический покер</b>
+                              В игре может участвовать от 2 до 10 человек. Каждому игроку в Техасском Холдеме раздается
+                              по
+                              две карты.
+                              После раздачи начинается торговля, которая проходит в несколько раундов.
+                              Два игрока по левую руку от дилера делают обязательные ставки, которые взимаются еще до
+                              начала торгов. Это делается для того, чтобы стимулировать игроков на активную игру. Эти
+                              обязательные ставки называются блайндами. Таковы правила игры в покер.
+                              Если вы начинающий игрок, то знайте, что во время раздачи выгоднее иметь позднюю позицию,
+                              чтобы отслеживать шаги своих соперников. Это не правила игры в покер, а скорее
+                              своеобразный
+                              тактический ход.
+                              После того, как игроки поставили блайнды, начинается первый этап торговли.
+                           </p>
+                        </div>
+                        <div class="slide slide_2" style="color: azure;">
+                           <p style="padding-top: 20px; padding-left: 20px; padding-right: 20px; font-size: 25px;">
+                              Правила игры в покер подразумевают наличие определенных
+                              действий, которые игрок совершает в процессе торговли:
+                           <p style="padding-left: 60px; padding-top: 10px; font-size: 25px;"><b>Поставить, бет</b> –
+                              сделать
+                              ставку</p>
+                           <p style="padding-left: 60px; padding-top: 10px; font-size: 25px;"><b>Ответить, колл</b> –
+                              поставить
+                              столько же,
+                              сколько поставил соперник – уравнять</p>
+                           <p style="padding-left: 60px; padding-top: 10px; font-size: 25px;"><b>Поднять, рейз</b> –
+                              увеличить
+                              ставку – поставить
+                              больше, чем соперники</p>
+                           <p style="padding-left: 60px; padding-top: 10px; font-size: 25px;"><b>Cбросить карты,
+                                 фолд</b> –
+                              отказаться от
+                              дальнейшего участия в игре и сбросить карты</p>
+                           <p style="padding-left: 60px; padding-top: 10px; font-size: 25px;"><b>Пропустить, чек</b> – в
+                              ситуациях, когда ставка
+                              уже была сделана или ставки не
+                              были сделаны соперниками – не добавлять ничего в банк, оставить «как есть»</p>
+                           </p>
+                        </div>
+                        <div class="slide slide_3" style="color: azure;">
+                           <p style="padding-top: 20px; padding-left: 20px; padding-right: 20px; font-size: 25px;">
+                              Круг торговли заканчивается тогда, когда все игроки
+                              сделали равные ставки или сбросили
+                              карты.
+                           </p>
+                           <p style="padding-top: 20px; padding-left: 20px; padding-right: 20px; font-size: 25px;">
+                              После первого круга торговли, если в раздаче остается больше одного человека, то, по
+                              правилам игры в покер, на стол кладутся три общие открытые карты, которые называют
+                              <b>флоп</b>.
+                              Общие карты нужно использовать для составления комбинаций.
+                           </p>
+                           <p style="padding-top: 20px; padding-left: 20px; padding-right: 20px; font-size: 25px;">
+                              Если и после этого раунда в раздаче остается больше одного человека, то кладут еще одну
+                              общую карту, которую называют <b>терном</b>. Аналогично флопу, после сдачи терна
+                              проводится еще
+                              один круг торговли.
+                           </p>
+                           <p style="padding-top: 20px; padding-left: 20px; padding-right: 20px; font-size: 25px;">
+                              После терна, если это необходимо, кладут последнюю общую карту – <b>ривер</b>.
+                           </p>
+                           <p style="padding-top: 20px; padding-left: 20px; padding-right: 20px; font-size: 25px;">
+                              После ривера следует еще один раунд торговли, и если после него на банк претендует два или
+                              более игроков, то происходит вскрытие.
+                           </p>
+                           <p style="padding-top: 20px; padding-left: 20px; padding-right: 20px; font-size: 25px;">
+                              Комбинации по правилам покера составляются из пяти общих карт и двух закрытых. Когда была
+                              осуществлена и уравнена последняя ставка, все оставшиеся в игре люди по очереди начинают
+                              открывать для противников свои карты. Из них составляются и оцениваются итоговые
+                              выигрышные комбинации.
+                           </p>
+                        </div>
+                        <div class="slide slide_4">
+                           <h1>Комбинации</h1>
+                           <div class="comb-description1">
+                              <b>РОЯЛ-ФЛЕШ</b> - Стрит-флеш от 10-ки до туза
+                           </div>
+                           <div class="comb-description2">
+                              <b>СТРИТ-ФЛЕШ</b> - 5 последовательных
+                           </div>
+                           <div class="comb-description3">
+                              одномастных карт
+                           </div>
+                           <div class="comb-description4">
+                              <b>КАРЕ</b> - 4 карты одного ранга
+                           </div>
+                           <div class="comb-description5">
+                              <b>ФУЛЛ-ХАУC</b> - 3 карты одного ранга и 2
+                           </div>
+                           <div class="comb-description6">
+                              карты другого
+                           </div>
+                           <div class="comb-description7">
+                              <b>ФЛЕШ</b> - 5 карт одногй масти
+                           </div>
+                           <div class="comb-description8">
+                              <b>СТРИТ</b> - 5 последовательных карт
+                           </div>
+                           <div class="comb-description9">
+                              <b>ТРОЙКА</b> - 3 карты одного ранга
+                           </div>
+                           <div class="comb-description10">
+                              <b>ДВЕ ПАРЫ</b> - 2 карты одного ранга + 2
+                           </div>
+                           <div class="comb-description11">
+                              карты другого ранга
+                           </div>
+                           <div class="comb-description12">
+                              <b>ПАРА</b> - 2 карты одного ранга
+                           </div>
+                           <div class="comb-description13">
+                              <b>СТАРШАЯ КАРТА</b> - карта с наибольшим
+                           </div>
+                           <div class="comb-description14">
+                              рангом
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div id="controls">
+                  <label for="slide1"></label>
+                  <label for="slide2"></label>
+                  <label for="slide3"></label>
+                  <label for="slide4"></label>
+               </div>
+               <div id="bullets">
+                  <label for="slide1"></label>
+                  <label for="slide2"></label>
+                  <label for="slide3"></label>
+                  <label for="slide4"></label>
+               </div>
+               <div style="display: flex; justify-content: center;">
+                  <a class="usl-btn" onclick="gotoMainMenu()" style="margin-top: 10px;">Назад</a>
+               </div>
+            </div>
+         </section>
+         <section id="main-menu-id-1" class="container-images">
+            <div id="to-connect-menu-id-1" class="img-box" style="background-image: url(img/mainMenu/img_1.jpg)"
+               onclick="gotoConnectMenu()">
+               <span class="bor-left-right"></span>
+               <span class="bor-top-bottom"></span>
+               <div class="content">
+                  <h2>Присоединиться</h2>
+                  <p>Присоединиться к лобби.</p>
+               </div>
+            </div>
+            <div id="to-create-menu-id-1" class="img-box" style="background-image: url(img/mainMenu/img_2.jpg)"
+               onclick="gotoCreateMenu()">
+               <span class="bor-left-right"></span>
+               <span class="bor-top-bottom"></span>
+               <div class="content">
+                  <h2>Создать лобби</h2>
+                  <p>Создать лобби, что бы другие игроки смогли присоединиться к вам.</p>
+               </div>
+            </div>
+            <div id="to-description-menu-id-1" class="img-box" style="background-image: url(img/mainMenu/img_3.jpg)"
+               onclick="gotoDescriptionMenu()">
+               <span class="bor-left-right"></span>
+               <span class="bor-top-bottom"></span>
+               <div class="content">
+                  <h2>Правила игры</h2>
+                  <p>Краткое руководство по игре в покер.</p>
+               </div>
+            </div>
+         </section>
+      </div>
+
+   </div>
+   </div>
+
+   <script src="js/app.js"></script>
+
 </body>
+
 </html>

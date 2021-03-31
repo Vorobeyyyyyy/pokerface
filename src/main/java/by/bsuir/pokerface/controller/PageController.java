@@ -21,7 +21,7 @@ public class PageController {
 
     @GetMapping("/main")
     public String getMainPage() {
-        return "main.html";
+        return "index.html";
     }
 
     @GetMapping("/test")
@@ -31,6 +31,6 @@ public class PageController {
 
     @GetMapping("id{roomId}")
     public String room(@PathVariable(value = "roomId") int roomId) {
-        return "test/test";
+        return "game.html";
     }
 }
