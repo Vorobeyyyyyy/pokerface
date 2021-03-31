@@ -1,0 +1,46 @@
+* {
+   margin: 0;
+}
+
+body {
+	background: content-box radial-gradient(rgb(40, 70, 70), rgb(0, 0, 0));
+}
+
+.game-title {
+	text-align: center;
+	font-size: 90px;
+	color: #70ffffaf;
+	padding: 40px;
+	padding-bottom: 20px;
+	font-family: 'Anton', sans-serif;
+	text-shadow: 0 0 25px rgba(35, 218, 231, 0.5);
+}
+
+.dws-wrapper {
+	display: flex;
+	padding-top: 20px;
+   justify-content: center;
+	align-items: center;
+	-webkit-box-reflect: below 15px linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+}
+
+.usl-btn {
+	width: 168px;
+	text-align: center;
+	position: relative;
+	display: inline-block;
+	padding: 10px 10px;
+	color: #70ffffaf;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-size: 20px;
+	font-family: 'Anton', sans-serif;
+	overflow: hidden;
+	transition: 0.2s;
+}
+
+.usl-btn:hover {
+	color: #153a3a;
+	background: #70ffffaf;
+	box-shadow: 0 0 10px #70ffffaf, 0 0 40px #70ffffaf, 0 0 80px #70ffffaf;
+}
