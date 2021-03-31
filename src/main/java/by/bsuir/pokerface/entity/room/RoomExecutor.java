@@ -20,7 +20,7 @@ public class RoomExecutor implements Runnable {
     private int currentBlind = INITIAL_BLIND;
     private int timeToTurn = INITIAL_TURN_TIME;
     private int pauseTime = 0;
-    private boolean firstTurn = true;
+    private boolean blindTurn = true;
     private Deck deck = new Deck();
 
     public RoomExecutor(Room room) {
@@ -108,15 +108,15 @@ public class RoomExecutor implements Runnable {
     }
 
     private void endTurn() {
-        if (!firstTurn) {
+        if (!blindTurn) {
             room.getSitedPlayers().get(room.getCurrentChair()).setMakeTurn(true);
         } else {
-            firstTurn = false;
+            blindTurn = false;
         }
         room.setCurrentChair(nextChair());
         MaxRaiseEvent maxRaiseEvent = new MaxRaiseEvent(room.getBet(), room.getSitedPlayers().stream().filter(Objects::nonNull).mapToInt(player -> player.getBet() + player.getBank()).min().orElse(room.getBet()));
         RoomNotifier.notifySinglePlayer(room, room.getCurrentChair(), maxRaiseEvent);
-        logger.log(Level.INFO, "Current chair {}, firstTurn = {}", room.getCurrentChair(), firstTurn);
+        logger.log(Level.INFO, "Current chair {}, firstTurn = {}", room.getCurrentChair(), blindTurn);
         if (isAllMakeTurn()) {
             nextState();
         }
@@ -128,11 +128,11 @@ public class RoomExecutor implements Runnable {
             player.setMakeTurn(false);
             player.setBet(0);
         });
-        firstTurn = true;
+        blindTurn = true;
         room.setCurrentChair(room.getCurrentButton());
         if (room.getRoomState() != RoomStateStorage.WAITING) {
             room.setCurrentChair(nextChair());
-            firstTurn = false;
+            blindTurn = false;
         }
         room.setBet(0);
         room.setRoomState(room.getRoomState().nextState());
@@ -224,5 +224,13 @@ public class RoomExecutor implements Runnable {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
+    }
+
+    public boolean isBlindTurn() {
+        return blindTurn;
+    }
+
+    public void setBlindTurn(boolean blindTurn) {
+        this.blindTurn = blindTurn;
     }
 }
