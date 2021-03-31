@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -20,9 +21,12 @@ import java.util.concurrent.TimeUnit;
 public class RoomServiceImpl implements RoomService {
     private final static Logger logger = LogManager.getLogger();
     private final static RoomDao ROOM_DAO = RoomDaoImpl.getInstance();
+    private static final int MIN_PLAYERS_COUNT = 2;
 
     private static final RoomService INSTANCE = new RoomServiceImpl();
-    private RoomServiceImpl(){}
+
+    private RoomServiceImpl() {
+    }
 
     public static RoomService getInstance() {
         return INSTANCE;
@@ -110,6 +114,9 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void startGame(int roomId) throws ServiceException {
         Room room = roomByIdOrThrow(roomId);
+        if (room.getSitedPlayers().stream().filter(Objects::nonNull).count() < MIN_PLAYERS_COUNT) {
+            throw new ServiceException("Not enough players to start the game");
+        }
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(room.getExecutor(), 0, 1, TimeUnit.SECONDS);
         StartGameEvent event = new StartGameEvent();
         RoomNotifier.notifyPlayers(room, event);
@@ -121,6 +128,6 @@ public class RoomServiceImpl implements RoomService {
         if (optionalRoom.isEmpty()) {
             throw new ServiceException("Room " + roomId + " not exists");
         }
-        return  optionalRoom.get();
+        return optionalRoom.get();
     }
 }

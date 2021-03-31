@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/")
@@ -31,8 +30,7 @@ public class PageController {
     }
 
     @GetMapping("id{roomId}")
-    public String enterRoom(@PathVariable(value = "roomId") int roomId, HttpSession session) {
-        Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
+    public String room(@PathVariable(value = "roomId") int roomId) {
         return "test/test";
     }
 }

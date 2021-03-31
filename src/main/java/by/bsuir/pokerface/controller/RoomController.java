@@ -36,12 +36,6 @@ public class RoomController {
         if (player == null) {
             return ResponseEntity.badRequest().build();
         }
-        try {
-            player.setEmitter(new SseEmitter());
-            player.getEmitter().send("ok");
-        } catch (IOException exception) {
-            logger.log(Level.ERROR, exception.getMessage());
-        }
         logger.log(Level.INFO, "Player {} get his emitter ({})", player.getNickname(), player.getEmitter());
         return ResponseEntity.ok(player.getEmitter());
     }
