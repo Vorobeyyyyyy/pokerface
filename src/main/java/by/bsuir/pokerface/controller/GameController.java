@@ -44,7 +44,7 @@ public class GameController {
         try {
             GAME_SERVICE.call(roomId, player);
         } catch (ServiceException exception) {
-            logger.log(Level.ERROR, exception);
+            logger.log(Level.ERROR, exception.getMessage());
             return new ResponseWithStatus(exception.getMessage());
         }
         return new ResponseWithStatus("ok");

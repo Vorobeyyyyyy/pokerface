@@ -21,7 +21,6 @@ body {
 	padding-top: 20px;
    justify-content: center;
 	align-items: center;
-	-webkit-box-reflect: below 15px linear-gradient(transparent, rgba(0, 0, 0, 0.2));
 }
 
 .usl-btn {

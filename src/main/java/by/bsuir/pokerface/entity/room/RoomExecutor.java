@@ -90,13 +90,14 @@ public class RoomExecutor implements Runnable {
     public void raise(Player player, int value) {
         logger.info("{} raising", player.getNickname());
         int playerBank = player.getBank();
+        int newRoomBet = value;
         value -= player.getBet();
         logger.log(Level.INFO, "value = {} bet = {}", value, room.getBet());
         if (value <= 0 || playerBank < value) {
             return;
         }
 
-        room.setBet(value);
+        room.setBet(newRoomBet);
         room.setPot(room.getPot() + value);
         player.setBet(player.getBet() + value);
         player.setBank(playerBank - value);
@@ -127,6 +128,8 @@ public class RoomExecutor implements Runnable {
         room.getSitedPlayers().stream().filter(Objects::nonNull).forEach(player -> {
             player.setMakeTurn(false);
             player.setBet(0);
+            PlayerCheckEvent playerCheckEvent = new PlayerCheckEvent(findChair(player), player.getBet(), player.getBank());
+            RoomNotifier.notifyPlayers(room, playerCheckEvent);
         });
         blindTurn = true;
         room.setCurrentChair(room.getCurrentButton());
