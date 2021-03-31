@@ -38,7 +38,12 @@ public class RoomController {
             return ResponseEntity.badRequest().build();
         }
         if (roomId != null) {
-
+            try {
+                ROOM_SERVICE.refreshRoom(roomId, player);
+            } catch (ServiceException exception) {
+                logger.log(Level.ERROR, exception.getMessage());
+                return ResponseEntity.badRequest().build();
+            }
         }
         logger.log(Level.INFO, "Player {} get his emitter ({})", player.getNickname(), player.getEmitter());
         return ResponseEntity.ok(player.getEmitter());
