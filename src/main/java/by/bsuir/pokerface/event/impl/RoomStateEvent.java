@@ -8,9 +8,9 @@ import by.bsuir.pokerface.event.EventName;
 
 public class RoomStateEvent extends AbstractGameEvent {
     public Room room;
-    boolean gameStarted;
-    int chair;
-    Card[] cards;
+    public boolean gameStarted;
+    public int chair;
+    public Card[] cards;
 
     public RoomStateEvent(Room room) {
         event = EventName.ROOM_STATE;
