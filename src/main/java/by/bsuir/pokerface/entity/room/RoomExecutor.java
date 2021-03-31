@@ -78,6 +78,7 @@ public class RoomExecutor implements Runnable {
         int callValue = Integer.min(room.getBet() - player.getBet(), playerBank);
         if (playerBank >= callValue) {
             player.setBank(playerBank - callValue);
+            player.setBet(callValue);
             room.setPot(room.getPot() + callValue);
         }
         logger.log(Level.INFO, "Chair {} called", room.getSitedPlayers().indexOf(player));
