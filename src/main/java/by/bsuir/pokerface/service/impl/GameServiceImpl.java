@@ -6,6 +6,7 @@ import by.bsuir.pokerface.entity.room.Room;
 import by.bsuir.pokerface.entity.user.Player;
 import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.service.GameService;
+import by.bsuir.pokerface.service.RoomService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,13 @@ import java.util.Optional;
 public class GameServiceImpl implements GameService {
     private final static Logger logger = LogManager.getLogger();
     private final static RoomDao ROOM_DAO = RoomDaoImpl.getInstance();
+
+    private static final GameService INSTANCE = new GameServiceImpl();
+    private GameServiceImpl(){}
+
+    public static GameService getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public void check(int roomId, Player player) throws ServiceException {

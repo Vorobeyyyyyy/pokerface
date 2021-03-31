@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/game/")
 public class GameController {
     private final static Logger logger = LogManager.getLogger();
-    private static final GameService GAME_SERVICE = new GameServiceImpl(); //todo
+    private static final GameService GAME_SERVICE = GameServiceImpl.getInstance();
 
     @PostMapping("check")
     public AbstractResponse check(HttpSession session) throws ControllerException {

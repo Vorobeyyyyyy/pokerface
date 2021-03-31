@@ -21,6 +21,13 @@ public class RoomServiceImpl implements RoomService {
     private final static Logger logger = LogManager.getLogger();
     private final static RoomDao ROOM_DAO = RoomDaoImpl.getInstance();
 
+    private static final RoomService INSTANCE = new RoomServiceImpl();
+    private RoomServiceImpl(){}
+
+    public static RoomService getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public Room createRoom(String name) throws ServiceException {
         Optional<Room> optionalRoom = ROOM_DAO.createRoom(name);

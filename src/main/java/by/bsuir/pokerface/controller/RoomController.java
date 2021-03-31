@@ -15,6 +15,7 @@ import by.bsuir.pokerface.service.impl.RoomServiceImpl;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -28,26 +29,29 @@ public class RoomController {
     private final static RoomService ROOM_SERVICE = new RoomServiceImpl(); //todo getInstance()
 
     @GetMapping("getEmitter")
-    public SseEmitter takeSseEmitter(HttpSession session) {
+    public ResponseEntity<SseEmitter> takeSseEmitter(HttpSession session) {
         Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
+        if (player == null) {
+            return ResponseEntity.badRequest().build();
+        }
         logger.log(Level.INFO, "Player {} get his emitter ({})", player.getNickname(), player.getEmitter());
-        return player.getEmitter();
+        return ResponseEntity.ok(player.getEmitter());
     }
 
     @PostMapping(value = "create")
     @ResponseBody
-    public CreateRoomResponse createRoom(@RequestBody CreateRoomRequest request) throws ControllerException {
+    public ResponseEntity<CreateRoomResponse> createRoom(@RequestBody CreateRoomRequest request) throws ControllerException {
         Room room;
         try {
             room = ROOM_SERVICE.createRoom(request.name);
         } catch (ServiceException exception) {
-            logger.log(Level.ERROR, exception);
+            logger.log(Level.ERROR, exception.getMessage());
             throw new ControllerException(exception);
         }
         CreateRoomResponse createRoomResponse = new CreateRoomResponse();
         createRoomResponse.id = room.getId();
         logger.log(Level.INFO, "NEW ROOM {}", room);
-        return createRoomResponse;
+        return ResponseEntity.ok(createRoomResponse);
     }
 
     @PostMapping(value = "sit")

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/")
 public class PageController {
     private final static Logger logger = LogManager.getLogger();
-    private final static RoomService ROOM_SERVICE = new RoomServiceImpl(); //todo getInstance()
+    private final static RoomService ROOM_SERVICE = RoomServiceImpl.getInstance();
 
     @GetMapping("/main")
     public String getMainPage() {
