@@ -17,9 +17,8 @@ public class MainController {
     private final static Logger logger = LogManager.getLogger();
 
     @PostMapping("/login")
-    public void login(@RequestBody LoginRequest request, HttpSession session) throws IOException {
+    public void login(@RequestBody LoginRequest request, HttpSession session) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        emitter.send("Ok");
         Player player = new Player(request.nickname, emitter);
         session.setAttribute(SessionAttributeName.PLAYER, player);
         logger.log(Level.INFO, player.getNickname());

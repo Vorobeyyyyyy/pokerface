@@ -61,6 +61,8 @@ function enterRoom() {
     xhr.send();
 }
 
+
+
 function getSse() {
     const eventSource = new EventSource("http://localhost:8080/room/getEmitter");
     eventSource.onopen = (e) => console.log("open");

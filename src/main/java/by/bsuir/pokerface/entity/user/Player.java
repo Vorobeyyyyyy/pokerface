@@ -30,8 +30,8 @@ public class Player {
         this.bet = bet;
     }
 
-    public Player(SseEmitter emitter) {
-        this.emitter = emitter;
+    public Player(String nickname) {
+        this.nickname = nickname;
     }
 
     public SseEmitter getEmitter() {

@@ -5,6 +5,7 @@ import by.bsuir.pokerface.entity.user.Player;
 import by.bsuir.pokerface.exception.ControllerException;
 import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.request.impl.CreateRoomRequest;
+import by.bsuir.pokerface.request.impl.EnterRoomRequest;
 import by.bsuir.pokerface.request.impl.SitDownRequest;
 import by.bsuir.pokerface.request.impl.StartGameRequest;
 import by.bsuir.pokerface.responce.AbstractResponse;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/room/")
@@ -33,6 +35,12 @@ public class RoomController {
         Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
         if (player == null) {
             return ResponseEntity.badRequest().build();
+        }
+        try {
+            player.setEmitter(new SseEmitter());
+            player.getEmitter().send("ok");
+        } catch (IOException exception) {
+            logger.log(Level.ERROR, exception.getMessage());
         }
         logger.log(Level.INFO, "Player {} get his emitter ({})", player.getNickname(), player.getEmitter());
         return ResponseEntity.ok(player.getEmitter());
@@ -54,6 +62,22 @@ public class RoomController {
         return ResponseEntity.ok(createRoomResponse);
     }
 
+    @PostMapping(value = "enter")
+    @ResponseBody
+    public AbstractResponse enterRoom(@RequestBody EnterRoomRequest request, HttpSession session) throws ControllerException {
+        int roomId = request.roomId;
+        Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
+        logger.log(Level.INFO, "Player {} entering room {}", player.getNickname(), roomId);
+        try {
+            ROOM_SERVICE.enterRoom(roomId, player);
+            session.setAttribute(SessionAttributeName.ROOM_ID, roomId);
+        } catch (ServiceException exception) {
+            logger.log(Level.ERROR, exception.getMessage());
+            return new ResponseWithStatus(exception.getMessage());
+        }
+        return new ResponseWithStatus("ok");
+    }
+
     @PostMapping(value = "sit")
     @ResponseBody
     public AbstractResponse sitDown(@RequestBody SitDownRequest request, HttpSession session) throws ControllerException {
@@ -62,7 +86,7 @@ public class RoomController {
         try {
             ROOM_SERVICE.sitDown(roomId, request.chairId, player);
         } catch (ServiceException exception) {
-            logger.log(Level.ERROR, exception);
+            logger.log(Level.ERROR, exception.getMessage());
             throw new ControllerException(exception);
         }
         return new ResponseWithStatus("ok");

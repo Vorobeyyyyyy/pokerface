@@ -81,7 +81,7 @@ public class RoomServiceImpl implements RoomService {
             throw new ServiceException("Player " + player.getNickname() + " not in room " + roomId);
         }
         if (room.getSitedPlayers().contains(player)) {
-            throw new ServiceException("Player " + player.getNickname() + "already sited");
+            throw new ServiceException("Player " + player.getNickname() + " already sited");
         }
         if (room.getSitedPlayers().get(chairId) != null) {
             throw new ServiceException("Chair " + chairId + " is busy in room " + roomId);
