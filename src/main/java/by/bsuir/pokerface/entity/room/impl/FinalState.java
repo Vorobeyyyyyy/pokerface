@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class FinalState implements RoomState {
     private final static Logger logger = LogManager.getLogger();
     private final CardService cardService = CardServiceImpl.getInstance();
-    private final static int AFTER_WIN_PAUSE = 2;
+    private final static int AFTER_WIN_PAUSE = 8;
 
     @Override
     public void onStart(Room room) {
@@ -52,6 +52,7 @@ public class FinalState implements RoomState {
                 .filter(player -> player.getCombination().equals(maxCombination)).collect(Collectors.toList());
         room.getExecutor().win(winPlayers);
         room.getExecutor().setPauseTime(AFTER_WIN_PAUSE);
+        room.getExecutor().resetRoom();
     }
 
     @Override

@@ -47,6 +47,7 @@ public class RoomServiceImpl implements RoomService {
         room.addPlayer(player);
         SseEmitter emitter = player.getEmitter();
         Runnable callback = () -> {
+            logger.log(Level.INFO, "Emitter of player {} complete or timeout", player.getNickname());
             try {
                 leaveRoom(roomId, player);
             } catch (ServiceException exception) {

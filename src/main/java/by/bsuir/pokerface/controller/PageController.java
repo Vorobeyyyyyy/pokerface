@@ -33,11 +33,12 @@ public class PageController {
     @GetMapping("id{roomId}")
     public String enterRoom(@PathVariable(value = "roomId") int roomId, HttpSession session) {
         Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
+        logger.log(Level.INFO, "Player {} entering room {}", player.getNickname(), roomId);
         try {
             ROOM_SERVICE.enterRoom(roomId, player);
             session.setAttribute(SessionAttributeName.ROOM_ID, roomId);
         } catch (ServiceException exception) {
-            logger.log(Level.ERROR, exception);
+            logger.log(Level.ERROR, exception.getMessage());
         }
         return "test/test";
     }

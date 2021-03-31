@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/room/")
 public class RoomController {
     private final static Logger logger = LogManager.getLogger();
-    private final static RoomService ROOM_SERVICE = new RoomServiceImpl(); //todo getInstance()
+    private final static RoomService ROOM_SERVICE =  RoomServiceImpl.getInstance();
 
     @GetMapping("getEmitter")
     public ResponseEntity<SseEmitter> takeSseEmitter(HttpSession session) {

@@ -42,6 +42,7 @@ public class RoomExecutor implements Runnable {
 
         if (nextChair() == room.getCurrentChair()) {
             win(room.getSitedPlayers().get(room.getCurrentChair()));
+            resetRoom();
         }
 
         if (timeToTurn <= 0) {
@@ -160,7 +161,6 @@ public class RoomExecutor implements Runnable {
             player.setBank(player.getBank() + winValue);
             RoomNotifier.notifyPlayers(room, new PlayerWinEvent(findChair(player), player.getBank()));
         });
-        resetRoom();
     }
 
     public void win(Player player) {
@@ -168,10 +168,9 @@ public class RoomExecutor implements Runnable {
         player.setBank(player.getBank() + room.getPot());
         RoomNotifier.notifyPlayers(room, new PlayerWinEvent(findChair(player), player.getBank()));
         room.setRoomState(RoomStateStorage.WAITING);
-        resetRoom();
     }
 
-    private void resetRoom() {
+    public void resetRoom() {
         room.setRoomState(RoomStateStorage.WAITING);
         room.clearCards();
         room.setPot(0);
