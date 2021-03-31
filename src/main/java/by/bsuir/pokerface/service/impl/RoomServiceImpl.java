@@ -46,7 +46,7 @@ public class RoomServiceImpl implements RoomService {
     public void enterRoom(int roomId, Player player) throws ServiceException {
         Room room = roomByIdOrThrow(roomId);
         if (room.getPlayers().contains(player)) {
-            throw new ServiceException("Player " + player.getNickname() + " already in room " + roomId);
+            return;
         }
         room.addPlayer(player);
         SseEmitter emitter = player.getEmitter();

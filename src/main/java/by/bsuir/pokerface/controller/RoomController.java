@@ -67,7 +67,7 @@ public class RoomController {
         RoomStateEvent event;
         try {
             ROOM_SERVICE.enterRoom(roomId, player);
-            event = ROOM_SERVICE.takeRoomStateEvent(roomId, player)
+            event = ROOM_SERVICE.takeRoomStateEvent(roomId, player);
             session.setAttribute(SessionAttributeName.ROOM_ID, roomId);
         } catch (ServiceException exception) {
             logger.log(Level.ERROR, exception.getMessage());
