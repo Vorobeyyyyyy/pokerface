@@ -81,7 +81,7 @@ public class RoomExecutor implements Runnable {
             player.setBet(player.getBet() + callValue);
             room.setPot(room.getPot() + callValue);
         }
-        logger.log(Level.INFO, "Chair {} called", room.getSitedPlayers().indexOf(player));
+        logger.log(Level.INFO, "Chair {} called {}", room.getSitedPlayers().indexOf(player), callValue);
         RoomNotifier.notifyPlayers(room, new PlayerCallEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
         RoomNotifier.notifyPlayers(room, new RoomPotEvent(room.getPot()));
         endTurn();
