@@ -10,6 +10,7 @@ public class WaitingState implements RoomState {
     public void onStart(Room room) {
         room.clearCards();
         room.getExecutor().notifyPlayers(new ClearBoardCardsEvent());
+        logger.info("АТПРАВИЛ ЭВЕНТ");
     }
 
     @Override
