@@ -183,7 +183,6 @@ public class RoomExecutor implements Runnable {
 
     public void resetRoom() {
         room.setRoomState(RoomStateStorage.WAITING);
-        room.getExecutor().notifyPlayers(new ClearBoardCardsEvent());
         room.setCurrentChair(-1);
         room.clearCards();
         room.setPot(0);

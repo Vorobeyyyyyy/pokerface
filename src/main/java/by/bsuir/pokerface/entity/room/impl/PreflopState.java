@@ -4,6 +4,7 @@ import by.bsuir.pokerface.entity.card.Card;
 import by.bsuir.pokerface.entity.card.Deck;
 import by.bsuir.pokerface.entity.room.*;
 import by.bsuir.pokerface.entity.user.Player;
+import by.bsuir.pokerface.event.impl.ClearBoardCardsEvent;
 import by.bsuir.pokerface.event.impl.SetPlayerCardEvent;
 import by.bsuir.pokerface.service.CardService;
 import by.bsuir.pokerface.service.impl.CardServiceImpl;
@@ -17,7 +18,7 @@ public class PreflopState implements RoomState {
     @Override
     public void onStart(Room room) {
         RoomExecutor executor = room.getExecutor();
-
+        executor.notifyPlayers(new ClearBoardCardsEvent());
         executor.setDeck(new Deck());
         cardService.shuffle(executor.getDeck());
 
