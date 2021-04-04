@@ -13,6 +13,13 @@ function onlyDigits(event) {
         event.preventDefault()
 }
 
+let roomId = /id(\d+)/.exec(window.location.href)[0].substr(2)
+let sockJS = new SockJS('/ws')
+let stompClient = Stomp.over(sockJS)
+
+let boardCount = 0
+let cardNames = []
+
 let countPalyers = 0
 let chairId = -1
 let raisedInFocus = false
@@ -218,6 +225,7 @@ function handlePlacesCards() {
         cardArray[i].update()
         cardArray[i].draw()
     }
+    console.log('fdsfdsfsdfdsfdsfsdffsdfdsfdsfdsfffffffffffffffffffffffffffffffffffffffffffffffffff')
 }
 
 function hundleBlinds() {
@@ -430,8 +438,8 @@ function animate() {
     requestAnimationFrame(animate)
 }
 
+webSocketConnect()
 enterRoomById()
-document.onload = getSse()
 animate()
 
 function enterRoomById() {
@@ -459,127 +467,126 @@ function enterRoomById() {
             }
         }
     }
-    let data = '{"roomId":"' + /id(\d+)/.exec(window.location.href)[0].substr(2) + '"}'
+    let data = '{"roomId":"' + roomId + '"}'
     console.log(data)
     xhr1.send(data)
 }
 
 
-function getSse() {
-    let boardCount = 0
-    let cardNames = []
-    const eventSource = new EventSource('/room/getEmitter')
-    console.log(eventSource)
-    eventSource.onopen = (e) => console.log('open')
-    eventSource.onerror = (e) => {
-        console.log('error')
-    }
-    eventSource.onmessage = function (event) {
-        console.log(event.data)
-        let json = JSON.parse(event.data)
-        switch (json.event) {
-            case 'PlayerSitDown': {
-                let id = json.chair
-                let elem = document.querySelector('.player-' + (id + 1) + ' > span')
-                elem.innerHTML = json.nickname
-                occupiedPlaces[id] = true
-                elem = document.querySelector('.player-' + (id + 1) + ' > button')
-                elem.innerHTML = 'busy'
-                elem = document.querySelector('.player-' + (id + 1) + ' .player-rate')
-                elem.innerHTML = '1000/0'
-                break
-            }
-            case 'SetCards': {
-                let id = json.chairId
-                playersHasCards[id] = true
-                let card1 = '../images/cards/' + json.firstCard.suit + '_' + json.firstCard.value + '.png'
-                let card2 = '../images/cards/' + json.secondCard.suit + '_' + json.secondCard.value + '.png'
-                for (let i = 0; i < occupiedPlaces.length; i++) {
-                    if (playersHasCards[i]) {
-                        getCards(i, card1, card2)
-                        document.querySelector('.player-' + (i + 1) + ' > button').style.opacity = '0'
-                    } else if (occupiedPlaces[i]) {
-                        getCards(i, '../images/cards/back.png', '../images/cards/back.png')
-                        document.querySelector('.player-' + (i + 1) + ' > button').style.opacity = '0'
-                    }
-                }
-                break
-            }
-            case 'GameStarted' : {
-                break
-            }
-            case 'TurnTime' : {
-                let elem = document.querySelector('.room-timer')
-                let sec = json.time
-                elem.innerHTML = sec
-                if (sec <= 10)
-                    elem.style.color = 'rgb(255, 74, 74)'
-                else
-                    elem.style.color = '#70ffffaf'
 
-                for (let i = 0; i < playersWalks.length; i++)
-                    playersWalks[i] = false
-                playersWalks[json.chair] = true
-                nextMove()
-                break
-            }
-            case 'RoomPot' : {
-                let value = json.value
-                console.log(value)
-                document.getElementsByClassName('room-pot')[0].innerHTML = value
-                break
-            }
-            case 'AddBoardCard' : {
-                boardCount++
-                let card = '../images/cards/' + json.card.suit + '_' + json.card.value + '.png'
-                if (boardCount < 4) {
-                    cardNames.push(card)
-                    if (cardNames.length === 3) {
-                        getThreeBoardCards(cardNames)
-                    }
-                } else if (boardCount > 3) {
-                    getOneBoardCards(card)
+function sockEvent(event) {
+    console.log(event)
+    let json = JSON.parse(event)
+    switch (json.event) {
+        case 'PlayerSitDown': {
+            let id = json.chair
+            let elem = document.querySelector('.player-' + (id + 1) + ' > span')
+            elem.innerHTML = json.nickname
+            occupiedPlaces[id] = true
+            elem = document.querySelector('.player-' + (id + 1) + ' > button')
+            elem.innerHTML = 'busy'
+            elem = document.querySelector('.player-' + (id + 1) + ' .player-rate')
+            elem.innerHTML = '1000/0'
+            break
+        }
+        case 'SetCards': {
+            let id = json.chairId
+            playersHasCards[id] = true
+
+            console.log('///////' + playersHasCards + '/////////////')
+            console.log('//////////////////////////' + id + '///////////////////////////////////')
+
+            let card1 = '../images/cards/' + json.firstCard.suit + '_' + json.firstCard.value + '.png'
+            let card2 = '../images/cards/' + json.secondCard.suit + '_' + json.secondCard.value + '.png'
+
+            console.log('//////////////////////////' + card1 + '///////////////////////////////////')
+            console.log('//////////////////////////' + card2 + '///////////////////////////////////')
+
+            for (let i = 0; i < occupiedPlaces.length; i++) {
+                if (playersHasCards[i]) {
+                    getCards(i, card1, card2)
+                    document.querySelector('.player-' + (i + 1) + ' > button').style.opacity = '0'
+                } else if (occupiedPlaces[i]) {
+                    getCards(i, '../images/cards/back.png', '../images/cards/back.png')
+                    document.querySelector('.player-' + (i + 1) + ' > button').style.opacity = '0'
                 }
-                if (boardCount === 5) {
-                    boardCount = 0
-                    cardNames = []
-                }
-                break
             }
-            case 'PlayerWin' : {
+            break
+        }
+        case 'GameStarted' : {
+            break
+        }
+        case 'TurnTime' : {
+            let elem = document.querySelector('.room-timer')
+            let sec = json.time
+            elem.innerHTML = sec
+            if (sec <= 10)
+                elem.style.color = 'rgb(255,74,74)'
+            else
+                elem.style.color = '#70ffffaf'
+
+            for (let i = 0; i < playersWalks.length; i++)
+                playersWalks[i] = false
+            playersWalks[json.chair] = true
+            nextMove()
+            break
+        }
+        case 'RoomPot' : {
+            let value = json.value
+            console.log(value)
+            document.getElementsByClassName('room-pot')[0].innerHTML = value
+            break
+        }
+        case 'AddBoardCard' : {
+            boardCount++
+            let card = '../images/cards/' + json.card.suit + '_' + json.card.value + '.png'
+            if (boardCount < 4) {
+                cardNames.push(card)
+                if (cardNames.length === 3) {
+                    getThreeBoardCards(cardNames)
+                }
+            } else if (boardCount > 3) {
+                getOneBoardCards(card)
+            }
+            if (boardCount === 5) {
                 boardCount = 0
-                cardArray = []
                 cardNames = []
-                break
             }
-            case 'MaxRaise' : {
-                minBank = json.minRaise
-                maxRaise = json.maxRaise
-                let elem = document.querySelectorAll('.range_slide > input')[1]
-                elem.min = minBank
-                elem.max = maxRaise
-                break
-            }
-            case 'PlayerRaised' : {
-                let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
-                elem.innerHTML = json.currentBank + '/' + json.bet
-                break
-            }
-            case 'PlayerFolded' : {
-                let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
-                elem.innerHTML = json.currentBank + '/0'
-                break
-            }
-            case 'PlayerCalled' : {
-                let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
-                elem.innerHTML = json.currentBank + '/' + json.bet
-                break
-            }
-            case 'PlayerChecked' : {
-                let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
-                elem.innerHTML = json.currentBank + '/' + json.bet
-                break
-            }
+            break
+        }
+        case 'PlayerWin' : {
+            boardCount = 0
+            cardArray = []
+            cardNames = []
+            break
+        }
+        case 'MaxRaise' : {
+            minBank = json.minRaise
+            maxRaise = json.maxRaise
+            let elem = document.querySelectorAll('.range_slide > input')[1]
+            elem.min = minBank
+            elem.max = maxRaise
+            break
+        }
+        case 'PlayerRaised' : {
+            let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
+            elem.innerHTML = json.currentBank + '/' + json.bet
+            break
+        }
+        case 'PlayerFolded' : {
+            let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
+            elem.innerHTML = json.currentBank + '/0'
+            break
+        }
+        case 'PlayerCalled' : {
+            let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
+            elem.innerHTML = json.currentBank + '/' + json.bet
+            break
+        }
+        case 'PlayerChecked' : {
+            let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
+            elem.innerHTML = json.currentBank + '/' + json.bet
+            break
         }
     }
 }
@@ -595,10 +602,28 @@ function sitDown(id) {
             if (xhr.status === 200) {
                 chairId = id
                 occupiedPlaces[id] = true
+                stompClient.subscribe(
+                    '/user/' + roomId + '_' + chairId + '/events', e => {
+                        sockEvent(e.body)
+                    }
+                )
             }
         }
     }
     xhr.send('{"chairId": "' + id + '"}')
+}
+
+function webSocketConnect() {
+    stompClient.connect({}, () => {
+        console.log('connected')
+        stompClient.subscribe(
+            '/room/' + roomId + "/events", e => {
+                sockEvent(e.body)
+            }
+        )
+    }, () => {
+        console.log('not connected')
+    })
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
