@@ -8,6 +8,7 @@ import by.bsuir.pokerface.entity.room.RoomState;
 import by.bsuir.pokerface.entity.room.RoomStateStorage;
 import by.bsuir.pokerface.entity.user.Player;
 import by.bsuir.pokerface.event.impl.PlayerCombinationEvent;
+import by.bsuir.pokerface.event.impl.RevealCardEvent;
 import by.bsuir.pokerface.event.impl.SetPlayerCardEvent;
 import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.service.CardService;
@@ -45,9 +46,9 @@ public class FinalState implements RoomState {
         }
         checkedPlayers.forEach(player -> {
             int chair = executor.findChair(player);
-            SetPlayerCardEvent setPlayerCardEvent = new SetPlayerCardEvent(chair, player.getCards()[0], player.getCards()[1]);
+            RevealCardEvent revealCardEvent = new RevealCardEvent(chair, player.getCards()[0], player.getCards()[1]);
             PlayerCombinationEvent playerCombinationEvent = new PlayerCombinationEvent(chair, player.getCombination());
-            executor.notifyPlayers(setPlayerCardEvent);
+            executor.notifyPlayers(revealCardEvent);
             executor.notifyPlayers(playerCombinationEvent);
         });
         Combination maxCombination = optionalMaxCombination.get();

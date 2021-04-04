@@ -18,4 +18,5 @@ public class EventName {
     public static final String PLAYER_COMBINATION = "PlayerCombination";
     public static final String ROOM_STATE = "RoomState";
     public static final String MAX_RAISE = "MaxRaise";
+    public static final String REVEAL_CARDS = "RevealCards";
 }

@@ -36,6 +36,7 @@ public class RoomExecutor implements Runnable {
 
     @Override
     public void run() {
+        TurnTimeEvent event = new TurnTimeEvent(room.getCurrentChair(), timeToTurn);
         if (pauseTime > 0) {
             pauseTime--;
             return;
@@ -62,7 +63,6 @@ public class RoomExecutor implements Runnable {
         }
 
         timeToTurn--;
-        TurnTimeEvent event = new TurnTimeEvent(room.getCurrentChair(), timeToTurn);
         notifyPlayers(event);
     }
 
@@ -183,6 +183,7 @@ public class RoomExecutor implements Runnable {
 
     public void resetRoom() {
         room.setRoomState(RoomStateStorage.WAITING);
+        room.setCurrentChair(-1);
         room.clearCards();
         room.setPot(0);
         room.getSitedPlayers().forEach(p -> {
