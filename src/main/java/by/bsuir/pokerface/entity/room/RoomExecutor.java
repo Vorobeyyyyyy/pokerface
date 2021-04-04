@@ -2,6 +2,7 @@ package by.bsuir.pokerface.entity.room;
 
 import by.bsuir.pokerface.entity.card.Deck;
 import by.bsuir.pokerface.entity.user.Player;
+import by.bsuir.pokerface.event.AbstractGameEvent;
 import by.bsuir.pokerface.event.impl.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,12 @@ public class RoomExecutor implements Runnable {
     private int pauseTime = 0;
     private boolean blindTurn = true;
     private Deck deck = new Deck();
+
+    private RoomEventListener roomEventListener;
+
+    public void setRoomEventListener(RoomEventListener roomEventListener) {
+        this.roomEventListener = roomEventListener;
+    }
 
     public RoomExecutor(Room room) {
         this.room = room;
@@ -56,12 +63,12 @@ public class RoomExecutor implements Runnable {
 
         timeToTurn--;
         TurnTimeEvent event = new TurnTimeEvent(room.getCurrentChair(), timeToTurn);
-        RoomNotifier.notifyPlayers(room, event);
+        notifyPlayers(event);
     }
 
     public void fold(Player player) {
         player.setFolded(true);
-        RoomNotifier.notifyPlayers(room, new PlayerFoldEvent(room.getCurrentChair(), player.getBank()));
+        notifyPlayers(new PlayerFoldEvent(room.getCurrentChair(), player.getBank()));
         endTurn();
     }
 
@@ -69,7 +76,7 @@ public class RoomExecutor implements Runnable {
         if (room.getBet() != player.getBet()) {
             return;
         }
-        RoomNotifier.notifyPlayers(room, new PlayerCheckEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
+        notifyPlayers(new PlayerCheckEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
         endTurn();
     }
 
@@ -82,8 +89,8 @@ public class RoomExecutor implements Runnable {
             room.setPot(room.getPot() + callValue);
         }
         logger.log(Level.INFO, "Chair {} called {}", room.getSitedPlayers().indexOf(player), callValue);
-        RoomNotifier.notifyPlayers(room, new PlayerCallEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
-        RoomNotifier.notifyPlayers(room, new RoomPotEvent(room.getPot()));
+        notifyPlayers(new PlayerCallEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
+        notifyPlayers(new RoomPotEvent(room.getPot()));
         endTurn();
     }
 
@@ -103,8 +110,8 @@ public class RoomExecutor implements Runnable {
         player.setBank(playerBank - value);
         room.getSitedPlayers().stream().filter(Objects::nonNull).forEach(p -> p.setMakeTurn(false));
         logger.log(Level.INFO, "Chair {} raised", room.getSitedPlayers().indexOf(player));
-        RoomNotifier.notifyPlayers(room, new RoomPotEvent(room.getPot()));
-        RoomNotifier.notifyPlayers(room, new PlayerRaiseEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
+        notifyPlayers(new RoomPotEvent(room.getPot()));
+        notifyPlayers(new PlayerRaiseEvent(room.getCurrentChair(), player.getBet(), player.getBank()));
         endTurn();
     }
 
@@ -116,7 +123,7 @@ public class RoomExecutor implements Runnable {
         }
         room.setCurrentChair(nextChair());
         MaxRaiseEvent maxRaiseEvent = new MaxRaiseEvent(room.getBet(), room.getSitedPlayers().stream().filter(Objects::nonNull).mapToInt(player -> player.getBet() + player.getBank()).min().orElse(room.getBet()));
-        RoomNotifier.notifySinglePlayer(room, room.getCurrentChair(), maxRaiseEvent);
+        notifySinglePlayer(room.getCurrentChair(), maxRaiseEvent);
         logger.log(Level.INFO, "Current chair {}, firstTurn = {}", room.getCurrentChair(), blindTurn);
         if (isAllMakeTurn()) {
             nextState();
@@ -129,7 +136,7 @@ public class RoomExecutor implements Runnable {
             player.setMakeTurn(false);
             player.setBet(0);
             PlayerCheckEvent playerCheckEvent = new PlayerCheckEvent(findChair(player), player.getBet(), player.getBank());
-            RoomNotifier.notifyPlayers(room, playerCheckEvent);
+            notifyPlayers(playerCheckEvent);
         });
         blindTurn = true;
         room.setCurrentChair(room.getCurrentButton());
@@ -163,14 +170,14 @@ public class RoomExecutor implements Runnable {
         logger.log(Level.INFO, "In room {} WIN player(s) {}", room.getId(), players.stream().map(Player::getNickname).collect(Collectors.toList()));
         players.forEach(player -> {
             player.setBank(player.getBank() + winValue);
-            RoomNotifier.notifyPlayers(room, new PlayerWinEvent(findChair(player), player.getBank()));
+            notifyPlayers(new PlayerWinEvent(findChair(player), player.getBank()));
         });
     }
 
     public void win(Player player) {
         logger.log(Level.INFO, "In room {} WIN player {}", room.getId(), player.getNickname());
         player.setBank(player.getBank() + room.getPot());
-        RoomNotifier.notifyPlayers(room, new PlayerWinEvent(findChair(player), player.getBank()));
+        notifyPlayers(new PlayerWinEvent(findChair(player), player.getBank()));
         room.setRoomState(RoomStateStorage.WAITING);
     }
 
@@ -187,6 +194,15 @@ public class RoomExecutor implements Runnable {
 
     private boolean isAllMakeTurn() {
         return room.getSitedPlayers().stream().filter(Objects::nonNull).allMatch(Player::isMakeTurn);
+    }
+
+    public void notifyPlayers(AbstractGameEvent event) {
+        roomEventListener.handleRoomEvent(room, event);
+
+    }
+
+    public void notifySinglePlayer(int chairId, AbstractGameEvent event) {
+        roomEventListener.handleSinglePlayerEvent(room, chairId, event);
     }
 
     public Room getRoom() {

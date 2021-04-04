@@ -50,15 +50,16 @@ function createRoom() {
 }
 
 function enterRoom() {
-    var url = "http://localhost:8080/id" + roomId.value;
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            console.log(xhr.status);
-            console.log(xhr.responseText);
-        }};
-    xhr.send();
+    let xhr1 = new XMLHttpRequest()
+    xhr1.open('POST', '/room/enter')
+    xhr1.setRequestHeader('Content-Type', 'application/json')
+    xhr1.onreadystatechange = function () {
+        if (xhr1.readyState === 4) {
+            console.log(xhr1.status)
+            console.log(xhr1.responseText)
+        }
+    }
+    xhr1.send('{"roomId":"' + roomId.value + '"}')
 }
 
 
@@ -163,4 +164,33 @@ function fold() {
         }};
     var data = '{"value":"' + raiseValue.value + '"}';
     xhr.send(data);
+}
+
+function webSocketTest() {
+    var url = "/user/test";
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send();
+}
+
+function webSocket() {
+    let sockJS = new SockJS("http://localhost:8080/ws");
+    let stompClient = Stomp.over(sockJS);
+    stompClient.connect({}, () => {
+        console.log("connected");
+        stompClient.subscribe(
+            "/user/" + roomId.value + '_' + chairId.value + "/events",
+            e => {
+                console.log(e.body)
+            }
+        );
+        stompClient.subscribe(
+            "/room/" + roomId.value + "/events", e => {
+                console.log(e.body)
+            }
+        )
+    }, () => {
+        console.log('not connected');
+    });
 }

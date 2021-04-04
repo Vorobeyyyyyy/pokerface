@@ -35,7 +35,7 @@ public class PreflopState implements RoomState {
                 Card[] cards = new Card[]{executor.getDeck().takeTopCard(), executor.getDeck().takeTopCard()};
                 player.setCards(cards);
                 SetPlayerCardEvent event = new SetPlayerCardEvent(i, cards[0], cards[1]);
-                RoomNotifier.notifySinglePlayer(room, i, event);
+                executor.notifySinglePlayer(i, event);
             }
         }
     }

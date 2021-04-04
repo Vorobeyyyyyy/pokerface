@@ -7,21 +7,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-@JsonIgnoreProperties({"emitter", "cards", "makeTurn", "combination"})
+@JsonIgnoreProperties({"cards", "makeTurn", "combination"})
 public class Player {
     private String nickname;
-    private SseEmitter emitter;
     private Card[] cards;
     private boolean folded;
     private boolean makeTurn;
     private int bank;
     private int bet;
     private Combination combination;
-
-    public Player(String nickname, SseEmitter emitter) {
-        this.nickname = nickname;
-        this.emitter = emitter;
-    }
 
     public Player(String nickname, boolean folded, int bank, int bet) {
         this.nickname = nickname;
@@ -32,14 +26,6 @@ public class Player {
 
     public Player(String nickname) {
         this.nickname = nickname;
-    }
-
-    public SseEmitter getEmitter() {
-        return emitter;
-    }
-
-    public void setEmitter(SseEmitter emitter) {
-        this.emitter = emitter;
     }
 
     public String getNickname() {

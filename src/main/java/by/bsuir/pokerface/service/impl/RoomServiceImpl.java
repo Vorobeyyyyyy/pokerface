@@ -3,14 +3,18 @@ package by.bsuir.pokerface.service.impl;
 import by.bsuir.pokerface.dao.RoomDao;
 import by.bsuir.pokerface.dao.impl.RoomDaoImpl;
 import by.bsuir.pokerface.entity.room.Room;
-import by.bsuir.pokerface.entity.room.RoomNotifier;
+import by.bsuir.pokerface.entity.room.RoomEventListener;
 import by.bsuir.pokerface.entity.user.Player;
+import by.bsuir.pokerface.event.AbstractGameEvent;
 import by.bsuir.pokerface.event.impl.*;
 import by.bsuir.pokerface.exception.ServiceException;
 import by.bsuir.pokerface.service.RoomService;
+import by.bsuir.pokerface.service.WebSocketService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Objects;
@@ -18,19 +22,32 @@ import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+@Service
 public class RoomServiceImpl implements RoomService {
     private final static Logger logger = LogManager.getLogger();
     private final static RoomDao ROOM_DAO = RoomDaoImpl.getInstance();
     private static final int MIN_PLAYERS_COUNT = 2;
 
-    private static final RoomService INSTANCE = new RoomServiceImpl();
+    private WebSocketService webSocketService;
 
-    private RoomServiceImpl() {
+    @Autowired
+    public void setWebSocketService(WebSocketService webSocketService) {
+        this.webSocketService = webSocketService;
     }
 
-    public static RoomService getInstance() {
-        return INSTANCE;
+
+    class WebSocketRoomEventListener implements RoomEventListener {
+        @Override
+        public void handleSinglePlayerEvent(Room room, int chairId, AbstractGameEvent event) {
+            webSocketService.notifySinglePlayer(room, chairId, event);
+        }
+
+        @Override
+        public void handleRoomEvent(Room room, AbstractGameEvent event) {
+            webSocketService.notifyPlayers(room, event);
+        }
     }
+    private final WebSocketRoomEventListener webSocketRoomEventListener = new WebSocketRoomEventListener();
 
     @Override
     public Room createRoom(String name) throws ServiceException {
@@ -50,19 +67,8 @@ public class RoomServiceImpl implements RoomService {
             return;
         }
         room.addPlayer(player);
-        SseEmitter emitter = player.getEmitter();
-        Runnable callback = () -> {
-            logger.log(Level.INFO, "Emitter of player {} complete or timeout", player.getNickname());
-            try {
-                leaveRoom(roomId, player);
-            } catch (ServiceException exception) {
-                logger.log(Level.ERROR, exception.getMessage());
-            }
-        };
-        emitter.onCompletion(callback);
-        emitter.onTimeout(callback);
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(player.getNickname());
-        RoomNotifier.notifyPlayers(room, playerJoinEvent);
+        webSocketService.notifyPlayers(room, playerJoinEvent);
         logger.log(Level.INFO, "Player {} entered room {}", player.getNickname(), roomId);
     }
 
@@ -72,7 +78,7 @@ public class RoomServiceImpl implements RoomService {
         if (room.getPlayers().contains(player)) {
             room.removePlayer(player);
             PlayerLeaveEvent event = new PlayerLeaveEvent(player.getNickname());
-            RoomNotifier.notifyPlayers(room, event);
+            webSocketService.notifyPlayers(room, event);
             logger.log(Level.INFO, "Player {} leave from room {}", player.getNickname(), roomId);
         }
     }
@@ -92,7 +98,7 @@ public class RoomServiceImpl implements RoomService {
         room.sitDown(player, chairId);
         player.setBank(1000);
         PlayerSitEvent event = new PlayerSitEvent(chairId, player.getNickname(), player.getBank());
-        RoomNotifier.notifyPlayers(room, event);
+        webSocketService.notifyPlayers(room, event);
         logger.log(Level.INFO, "Player {} sit on {} chair in {} room", player.getNickname(), chairId, roomId);
     }
 
@@ -107,7 +113,7 @@ public class RoomServiceImpl implements RoomService {
         }
         room.getUp(chairId);
         PlayerGetUpEvent event = new PlayerGetUpEvent(player.getNickname(), chairId);
-        RoomNotifier.notifyPlayers(room, event);
+        webSocketService.notifyPlayers(room, event);
     }
 
     @Override
@@ -116,9 +122,10 @@ public class RoomServiceImpl implements RoomService {
         if (room.getSitedPlayers().stream().filter(Objects::nonNull).count() < MIN_PLAYERS_COUNT) {
             throw new ServiceException("Not enough players to start the game");
         }
+        room.getExecutor().setRoomEventListener(webSocketRoomEventListener);
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(room.getExecutor(), 0, 1, TimeUnit.SECONDS);
         StartGameEvent event = new StartGameEvent();
-        RoomNotifier.notifyPlayers(room, event);
+        webSocketService.notifyPlayers(room, event);
     }
 
     @Override

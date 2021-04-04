@@ -1,6 +1,7 @@
 <html>
 <head>
-
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 </head>
 <body style="display: flex; flex-direction: column">
 <div>
@@ -25,6 +26,8 @@
     <button onclick="startRoom()">start</button>
 </div>
 <button onclick="getSse()">getSse</button>
+<button onclick="webSocket()">webSocket</button>
+<button onclick="webSocketTest()">webSocketTest</button>
 
 <div>
     <button onclick="check()">check</button>

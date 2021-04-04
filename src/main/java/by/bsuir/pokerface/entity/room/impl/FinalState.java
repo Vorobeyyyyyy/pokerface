@@ -3,7 +3,7 @@ package by.bsuir.pokerface.entity.room.impl;
 import by.bsuir.pokerface.comparator.CombinationComparator;
 import by.bsuir.pokerface.entity.card.Combination;
 import by.bsuir.pokerface.entity.room.Room;
-import by.bsuir.pokerface.entity.room.RoomNotifier;
+import by.bsuir.pokerface.entity.room.RoomExecutor;
 import by.bsuir.pokerface.entity.room.RoomState;
 import by.bsuir.pokerface.entity.room.RoomStateStorage;
 import by.bsuir.pokerface.entity.user.Player;
@@ -16,7 +16,10 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FinalState implements RoomState {
@@ -26,6 +29,7 @@ public class FinalState implements RoomState {
 
     @Override
     public void onStart(Room room) {
+        RoomExecutor executor = room.getExecutor();
         List<Player> checkedPlayers = room.getSitedPlayers().stream().filter(Objects::nonNull).filter(player -> !player.isFolded()).collect(Collectors.toList());
         checkedPlayers.forEach(player -> {
             try {
@@ -40,19 +44,19 @@ public class FinalState implements RoomState {
             return;
         }
         checkedPlayers.forEach(player -> {
-            int chair = room.getExecutor().findChair(player);
+            int chair = executor.findChair(player);
             SetPlayerCardEvent setPlayerCardEvent = new SetPlayerCardEvent(chair, player.getCards()[0], player.getCards()[1]);
             PlayerCombinationEvent playerCombinationEvent = new PlayerCombinationEvent(chair, player.getCombination());
-            RoomNotifier.notifyPlayers(room, setPlayerCardEvent);
-            RoomNotifier.notifyPlayers(room, playerCombinationEvent);
+            executor.notifyPlayers(setPlayerCardEvent);
+            executor.notifyPlayers(playerCombinationEvent);
         });
         Combination maxCombination = optionalMaxCombination.get();
         logger.log(Level.INFO, "Max combination is {}", maxCombination);
         List<Player> winPlayers = checkedPlayers.stream()
                 .filter(player -> player.getCombination().equals(maxCombination)).collect(Collectors.toList());
-        room.getExecutor().win(winPlayers);
-        room.getExecutor().setPauseTime(AFTER_WIN_PAUSE);
-        room.getExecutor().resetRoom();
+        executor.win(winPlayers);
+        executor.setPauseTime(AFTER_WIN_PAUSE);
+        executor.resetRoom();
     }
 
     @Override
