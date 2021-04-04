@@ -1,13 +1,11 @@
 package by.bsuir.pokerface.factory.impl;
 
 import by.bsuir.pokerface.comparator.CardComparator;
-import by.bsuir.pokerface.entity.card.Card;
-import by.bsuir.pokerface.entity.card.Combination;
-import by.bsuir.pokerface.entity.card.CombinationConstant;
-import by.bsuir.pokerface.entity.card.CombinationType;
+import by.bsuir.pokerface.entity.card.*;
 import by.bsuir.pokerface.factory.CombinationFactory;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,14 +15,15 @@ public class FullHouseCombinationFactory implements CombinationFactory {
     private static final int TRIPLE_CARD_FREQUENCY = 3;
 
     @Override
-    public Optional<Combination> createCombination(List<Card> cards) {
-        Optional<Card> tripleCard = cards.stream().distinct().filter(card -> Collections.frequency(cards, card) == TRIPLE_CARD_FREQUENCY).findFirst();
-        List<Card> doubleCards = cards.stream().distinct().filter(card -> Collections.frequency(cards, card) == DOUBLE_CARD_FREQUENCY).collect(Collectors.toList());
-        if (tripleCard.isEmpty() || doubleCards.isEmpty()) {
+    public Optional<Combination> createCombination(List<Card> cards) { //fixme
+        List<Value> values = cards.stream().map(Card::getValue).collect(Collectors.toList());
+        Optional<Value> tripleValue = values.stream().distinct().filter(value -> Collections.frequency(values, value) == TRIPLE_CARD_FREQUENCY).findFirst();
+        List<Value> doubleValues = values.stream().distinct().filter(value -> Collections.frequency(values, value) == DOUBLE_CARD_FREQUENCY).collect(Collectors.toList());
+        if (tripleValue.isEmpty() || doubleValues.isEmpty()) {
             return Optional.empty();
         }
-        int strength = tripleCard.get().getValue().getStrength() * CombinationConstant.COMBINATION_STRENGTH +
-                doubleCards.stream().max(CardComparator.HIGH_TO_LOW).get().getValue().getStrength();
+        int strength = tripleValue.get().getStrength() * CombinationConstant.COMBINATION_STRENGTH +
+                doubleValues.stream().max(Comparator.naturalOrder()).get().getStrength();
         return Optional.of(new Combination(CombinationType.FULL_HOUSE, strength));
     }
 }
