@@ -225,7 +225,6 @@ function handlePlacesCards() {
         cardArray[i].update()
         cardArray[i].draw()
     }
-    console.log('fdsfdsfsdfdsfdsfsdffsdfdsfdsfdsfffffffffffffffffffffffffffffffffffffffffffffffffff')
 }
 
 function hundleBlinds() {
@@ -493,14 +492,8 @@ function sockEvent(event) {
             let id = json.chairId
             playersHasCards[id] = true
 
-            console.log('///////' + playersHasCards + '/////////////')
-            console.log('//////////////////////////' + id + '///////////////////////////////////')
-
             let card1 = '../images/cards/' + json.firstCard.suit + '_' + json.firstCard.value + '.png'
             let card2 = '../images/cards/' + json.secondCard.suit + '_' + json.secondCard.value + '.png'
-
-            console.log('//////////////////////////' + card1 + '///////////////////////////////////')
-            console.log('//////////////////////////' + card2 + '///////////////////////////////////')
 
             for (let i = 0; i < occupiedPlaces.length; i++) {
                 if (playersHasCards[i]) {
@@ -525,10 +518,13 @@ function sockEvent(event) {
             else
                 elem.style.color = '#70ffffaf'
 
-            for (let i = 0; i < playersWalks.length; i++)
-                playersWalks[i] = false
-            playersWalks[json.chair] = true
-            nextMove()
+            let chair = json.chair
+            if(chair > 0) {
+                for (let i = 0; i < playersWalks.length; i++)
+                    playersWalks[i] = false
+                playersWalks[chair] = true
+                nextMove()
+            }
             break
         }
         case 'RoomPot' : {
