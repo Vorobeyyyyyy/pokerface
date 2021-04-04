@@ -36,9 +36,8 @@ public class RoomExecutor implements Runnable {
 
     @Override
     public void run() {
-        TurnTimeEvent event = new TurnTimeEvent(room.getCurrentChair(), timeToTurn);
-        notifyPlayers(event);
         if (pauseTime > 0) {
+            notifyPlayers(new TurnTimeEvent(-1, pauseTime));
             pauseTime--;
             return;
         }
@@ -62,7 +61,8 @@ public class RoomExecutor implements Runnable {
                 fold(player);
             }
         }
-
+        TurnTimeEvent event = new TurnTimeEvent(room.getCurrentChair(), timeToTurn);
+        notifyPlayers(event);
         timeToTurn--;
     }
 
