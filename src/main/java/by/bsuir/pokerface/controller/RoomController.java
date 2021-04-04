@@ -86,6 +86,23 @@ public class RoomController {
         return new ResponseWithStatus("ok");
     }
 
+    @PostMapping(value = "getup")
+    @ResponseBody
+    public ResponseEntity<AbstractGameEvent> getUp(HttpSession session) throws ControllerException {
+        Integer roomId = (Integer) session.getAttribute(SessionAttributeName.ROOM_ID);
+        Player player = (Player) session.getAttribute(SessionAttributeName.PLAYER);
+        if (roomId == null || player == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            roomService.getUp(roomId, player);
+        } catch (ServiceException exception) {
+            logger.log(Level.ERROR, exception.getMessage());
+            throw new ControllerException(exception);
+        }
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping(value = "start")
     @ResponseBody
     public AbstractResponse startRoom(@RequestBody StartGameRequest request) throws ControllerException {

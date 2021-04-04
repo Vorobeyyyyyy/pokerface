@@ -103,16 +103,17 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void getUp(int roomId, int chairId, Player player) throws ServiceException {
+    public void getUp(int roomId, Player player) throws ServiceException {
         Room room = roomByIdOrThrow(roomId);
         if (!room.getPlayers().contains(player)) {
             throw new ServiceException("Player " + player.getNickname() + " not in room " + roomId);
         }
-        if (room.getSitedPlayers().get(chairId) != player) {
-            throw new ServiceException("Player " + player.getNickname() + " not sit in chair " + chairId);
+        int chairId = room.getExecutor().findChair(player);
+        if (chairId == -1) {
+            throw new ServiceException("Player " + player.getNickname() + " not sit in chair");
         }
         room.getUp(chairId);
-        PlayerGetUpEvent event = new PlayerGetUpEvent(player.getNickname(), chairId);
+        PlayerGetUpEvent event = new PlayerGetUpEvent(chairId);
         webSocketService.notifyPlayers(room, event);
     }
 

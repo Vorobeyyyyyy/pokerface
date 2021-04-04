@@ -14,7 +14,7 @@ public interface RoomService {
 
     default void sitDown(int roomId, int chairId, Player player) throws ServiceException { }
 
-    default void getUp(int roomId, int chairId, Player player) throws ServiceException { }
+    default void getUp(int roomId, Player player) throws ServiceException { }
 
     default void startGame(int roomId) throws ServiceException { }
 

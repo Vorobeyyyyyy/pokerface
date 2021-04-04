@@ -20,6 +20,7 @@ public class RoomExecutor implements Runnable {
 
     private int currentBlind = INITIAL_BLIND;
     private int timeToTurn = INITIAL_TURN_TIME;
+    private int maxRaise = 1000;
     private int pauseTime = 0;
     private boolean blindTurn = true;
     private Deck deck = new Deck();
@@ -100,7 +101,7 @@ public class RoomExecutor implements Runnable {
         int newRoomBet = value;
         value -= player.getBet();
         logger.log(Level.INFO, "value = {} bet = {}", value, room.getBet());
-        if (value <= 0 || playerBank < value) {
+        if (value <= 0 || playerBank < value || value > maxRaise) {
             return;
         }
 
@@ -122,7 +123,8 @@ public class RoomExecutor implements Runnable {
             blindTurn = false;
         }
         room.setCurrentChair(nextChair());
-        MaxRaiseEvent maxRaiseEvent = new MaxRaiseEvent(room.getBet(), room.getSitedPlayers().stream().filter(Objects::nonNull).mapToInt(player -> player.getBet() + player.getBank()).min().orElse(room.getBet()));
+        maxRaise = room.getSitedPlayers().stream().filter(Objects::nonNull).mapToInt(player -> player.getBet() + player.getBank()).min().orElse(room.getBet() + 1);
+        MaxRaiseEvent maxRaiseEvent = new MaxRaiseEvent(room.getBet() + 1, maxRaise);
         notifySinglePlayer(room.getCurrentChair(), maxRaiseEvent);
         logger.log(Level.INFO, "Current chair {}, firstTurn = {}", room.getCurrentChair(), blindTurn);
         if (isAllMakeTurn()) {
