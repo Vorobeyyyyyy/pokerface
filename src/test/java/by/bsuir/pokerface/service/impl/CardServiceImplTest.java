@@ -26,11 +26,11 @@ public class CardServiceImplTest {
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writeValueAsString(room));
         List<Card> cards = List.of(
-                new Card(Suit.CLUB, Value.KING),
-                new Card(Suit.DIAMOND, Value.TEN),
-                new Card(Suit.HEART, Value.TEN),
-                new Card(Suit.SPADE, Value.TEN),
-                new Card(Suit.SPADE, Value.THREE),
+                new Card(Suit.CLUB, Value.ACE),
+                new Card(Suit.DIAMOND, Value.KING),
+                new Card(Suit.HEART, Value.QUEEN),
+                new Card(Suit.SPADE, Value.JACK),
+                new Card(Suit.CLUB, Value.TEN),
                 new Card(Suit.SPADE, Value.NINE),
                 new Card(Suit.CLUB, Value.QUEEN)
         );

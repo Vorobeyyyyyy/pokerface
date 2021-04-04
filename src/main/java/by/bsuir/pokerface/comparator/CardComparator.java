@@ -5,7 +5,7 @@ import by.bsuir.pokerface.entity.card.Card;
 import java.util.Comparator;
 
 public enum CardComparator implements Comparator<Card> {
-    LOW_TO_HIGH((Comparator.comparing(Card::getValue))),
+    LOW_TO_HIGH((Comparator.comparing(card -> card.getValue().getStrength()))),
     HIGH_TO_LOW(LOW_TO_HIGH.reversed());
 
 
@@ -17,6 +17,6 @@ public enum CardComparator implements Comparator<Card> {
 
     @Override
     public int compare(Card o1, Card o2) {
-        return 0;
+        return comparator.compare(o1, o2);
     }
 }

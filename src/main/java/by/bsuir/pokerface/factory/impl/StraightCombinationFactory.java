@@ -1,9 +1,7 @@
 package by.bsuir.pokerface.factory.impl;
 
 import by.bsuir.pokerface.comparator.CardComparator;
-import by.bsuir.pokerface.entity.card.Card;
-import by.bsuir.pokerface.entity.card.Combination;
-import by.bsuir.pokerface.entity.card.CombinationType;
+import by.bsuir.pokerface.entity.card.*;
 import by.bsuir.pokerface.factory.CombinationFactory;
 
 import java.util.List;
@@ -16,13 +14,17 @@ public class StraightCombinationFactory implements CombinationFactory {
     @Override
     public Optional<Combination> createCombination(List<Card> cards) {
         int passCount = 0;
-        List<Card> sortedCards = cards.stream().sorted(CardComparator.LOW_TO_HIGH).collect(Collectors.toList());
+        List<Value> sortedValues = cards.stream().sorted(CardComparator.LOW_TO_HIGH).map(Card::getValue).distinct().collect(Collectors.toList());
+        if (sortedValues.size() < CombinationConstant.CARD_COUNT) {
+            return Optional.empty();
+        }
+
         int strength = 0;
-        for (int i = sortedCards.size() - 1; i > 0; i--) {
-            if (sortedCards.get(i).getValue().ordinal() - 1 == sortedCards.get(i - 1).getValue().ordinal()) {
+        for (int i = sortedValues.size() - 1; i > 0; i--) {
+            if (sortedValues.get(i).ordinal() - 1 == sortedValues.get(i - 1).ordinal()) {
                 passCount++;
                 if (strength == 0) {
-                    strength = sortedCards.get(i).getValue().getStrength();
+                    strength = sortedValues.get(i).getStrength();
                 }
             } else {
                 passCount = 0;
