@@ -430,11 +430,11 @@ function animate() {
     requestAnimationFrame(animate)
 }
 
-dsds()
-getSse()
+enterRoomById()
+document.onload = getSse()
 animate()
 
-function dsds() {
+function enterRoomById() {
     let xhr1 = new XMLHttpRequest()
     xhr1.open('POST', '/room/enter')
     xhr1.setRequestHeader('Content-Type', 'application/json')
@@ -442,11 +442,26 @@ function dsds() {
         if (xhr1.readyState === 4) {
             console.log(xhr1.status)
             console.log(xhr1.responseText)
+            let json = JSON.parse(xhr1.responseText)
+            let players = json.room.sitedPlayers
+            for (let i = 0; i < players.length; i++) {
+                console.log(players[i])
+                if (players[i] != null) {
+                    console.log(players[i])
+                    let elem = document.querySelector('.player-' + (i + 1) + ' > span')
+                    elem.innerHTML = players[i].nickname
+                    occupiedPlaces[i] = true
+                    elem = document.querySelector('.player-' + (i + 1) + ' > button')
+                    elem.innerHTML = 'busy'
+                    elem = document.querySelector('.player-' + (i + 1) + ' .player-rate')
+                    elem.innerHTML = players[i].bank + '/' + players[i].bet
+                }
+            }
         }
     }
-    let dsad = '{"roomId":"' + /id(\d+)/.exec(window.location.href)[0].substr(2) + '"}'
-    console.log(dsad)
-    xhr1.send(dsad)
+    let data = '{"roomId":"' + /id(\d+)/.exec(window.location.href)[0].substr(2) + '"}'
+    console.log(data)
+    xhr1.send(data)
 }
 
 
@@ -470,6 +485,8 @@ function getSse() {
                 occupiedPlaces[id] = true
                 elem = document.querySelector('.player-' + (id + 1) + ' > button')
                 elem.innerHTML = 'busy'
+                elem = document.querySelector('.player-' + (id + 1) + ' .player-rate')
+                elem.innerHTML = '1000/0'
                 break
             }
             case 'SetCards': {
@@ -492,6 +509,14 @@ function getSse() {
                 break
             }
             case 'TurnTime' : {
+                let elem = document.querySelector('.room-timer')
+                let sec = json.time
+                elem.innerHTML = sec
+                if (sec <= 10)
+                    elem.style.color = 'rgb(255, 74, 74)'
+                else
+                    elem.style.color = '#70ffffaf'
+
                 for (let i = 0; i < playersWalks.length; i++)
                     playersWalks[i] = false
                 playersWalks[json.chair] = true
@@ -522,7 +547,9 @@ function getSse() {
                 break
             }
             case 'PlayerWin' : {
+                boardCount = 0
                 cardArray = []
+                cardNames = []
                 break
             }
             case 'MaxRaise' : {
@@ -553,7 +580,6 @@ function getSse() {
                 elem.innerHTML = json.currentBank + '/' + json.bet
                 break
             }
-
         }
     }
 }
@@ -632,5 +658,3 @@ function check() {
 function gotoMainMenu() {
     window.location.replace('/main')
 }
-
-////////////////////////////////////////////TIMER///////////////////////////////////////////////////////////////////////
