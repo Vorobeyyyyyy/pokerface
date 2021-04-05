@@ -16,9 +16,15 @@ function onlyDigits(event) {
 let roomId = /id(\d+)/.exec(window.location.href)[0].substr(2)
 let sockJS = new SockJS('/ws')
 let stompClient = Stomp.over(sockJS)
+stompClient.debug = null
 
 let boardCount = 0
 let cardNames = []
+
+let roomSubscriber
+let chairSubscriber
+
+let winPlayer = -1
 
 let countPalyers = 0
 let chairId = -1
@@ -47,22 +53,6 @@ raisedRange.addEventListener('blur', (event) => {
     raisedInFocus = false
     console.log(raisedInFocus)
 })
-
-const smallImg = new Image()
-smallImg.src = 'images/small.png'
-const bigImg = new Image()
-bigImg.src = 'images/big.png'
-
-const cardImg1 = new Image()
-cardImg1.src = 'images/cards/SPADE_THREE.png'
-const cardImg2 = new Image()
-cardImg2.src = 'images/cards/SPADE_FOUR.png'
-const cardImg3 = new Image()
-cardImg3.src = 'images/cards/SPADE_FIVE.png'
-const cardImg4 = new Image()
-cardImg4.src = 'images/cards/SPADE_SIX.png'
-const cardImg5 = new Image()
-cardImg5.src = 'images/cards/SPADE_SEVEN.png'
 
 const occupiedPlaces = [false, false, false, false, false, false, false, false]
 const playersWalks = [true, false, false, false, false, false, false, false]
@@ -272,16 +262,8 @@ let buttons = document.getElementsByClassName('button-player');
     b.addEventListener('click', function () {
         if (chairId === -1) {
             this.innerHTML = 'busy'
-            // if (playersHasCards[this.id[11] - 1]) {
-            // 	//pickUpCards(this.id[11] - 1)
-            // 	//this.style.opacity = 0.8
-            // } else {
             sitDown(this.id[11] - 1)
-            //this.style.opacity = 0
-            //getCards(this.id)
-            // }
         }
-
     })
 })
 
@@ -450,11 +432,15 @@ function enterRoomById() {
             console.log(xhr1.status)
             console.log(xhr1.responseText)
             let json = JSON.parse(xhr1.responseText)
+
+            let gameStarted = json.gameStarted
+            console.log(gameStarted)
+
+            document.getElementsByClassName('room-pot')[0].innerHTML = json.room.pot
+
             let players = json.room.sitedPlayers
             for (let i = 0; i < players.length; i++) {
-                console.log(players[i])
                 if (players[i] != null) {
-                    console.log(players[i])
                     let elem = document.querySelector('.player-' + (i + 1) + ' > span')
                     elem.innerHTML = players[i].nickname
                     occupiedPlaces[i] = true
@@ -462,6 +448,60 @@ function enterRoomById() {
                     elem.innerHTML = 'busy'
                     elem = document.querySelector('.player-' + (i + 1) + ' .player-rate')
                     elem.innerHTML = players[i].bank + '/' + players[i].bet
+
+                    let isFolded = players[i].folded
+                    console.log(isFolded)
+
+                    if (!isFolded && gameStarted) {
+                        getCards(i, '../images/cards/back.png', '../images/cards/back.png')
+                        document.querySelector('.player-' + (i + 1) + ' > button').style.opacity = '0'
+                    }
+                }
+            }
+
+            if (json.chair >= 0) {
+                chairId = json.chair
+            }
+
+            if (gameStarted) {
+                let currentCards = []
+
+                let cards = json.room.cards
+                for (let i = 0; i < cards.length; i++) {
+                    if (cards[i] != null) {
+                        console.log(cards[i])
+                        currentCards.push('../images/cards/' + cards[i].suit + '_' + cards[i].value + '.png')
+                    }
+                }
+
+                console.log(currentCards)
+
+                if (currentCards.length === 3) {
+                    boardCount = 3
+                    getThreeBoardCards(currentCards)
+                }
+                if (currentCards.length === 4) {
+                    boardCount = 4
+                    getThreeBoardCards(currentCards)
+                    getOneBoardCards(currentCards[3])
+                }
+                if (currentCards.length === 5) {
+                    boardCount = 5
+                    getThreeBoardCards(currentCards)
+                    getOneBoardCards(currentCards[3])
+                    getOneBoardCards(currentCards[4])
+                }
+
+                if (chairId >= 0 && json.cards != null) {
+                    let card1 = '../images/cards/' + json.cards[0].suit + '_' + json.cards[0].value + '.png'
+                    let card2 = '../images/cards/' + json.cards[1].suit + '_' + json.cards[1].value + '.png'
+                    getCards(chairId, card1, card2)
+                    document.querySelector('.player-' + (chairId + 1) + ' > button').style.opacity = '0'
+                }
+
+                if (boardCount === 5) {
+                    boardCount = 0
+                    cardNames = []
                 }
             }
         }
@@ -470,7 +510,6 @@ function enterRoomById() {
     console.log(data)
     xhr1.send(data)
 }
-
 
 
 function sockEvent(event) {
@@ -486,6 +525,11 @@ function sockEvent(event) {
             elem.innerHTML = 'busy'
             elem = document.querySelector('.player-' + (id + 1) + ' .player-rate')
             elem.innerHTML = '1000/0'
+            break
+        }
+        case 'PlayerCombination' : {
+            let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
+            elem.innerHTML = json.combination.type
             break
         }
         case 'SetCards': {
@@ -519,7 +563,7 @@ function sockEvent(event) {
                 elem.style.color = '#70ffffaf'
 
             let chair = json.chair
-            if(chair > 0) {
+            if (chair > 0) {
                 for (let i = 0; i < playersWalks.length; i++)
                     playersWalks[i] = false
                 playersWalks[chair] = true
@@ -550,10 +594,35 @@ function sockEvent(event) {
             }
             break
         }
-        case 'PlayerWin' : {
+        case 'ClearBoardCards' : {
             boardCount = 0
             cardArray = []
             cardNames = []
+            if (winPlayer >= 0) {
+                let btnElem = document.querySelector('.player-' + (winPlayer + 1) + ' > button')
+                let label1 = document.querySelectorAll('.player-' + (winPlayer + 1) + ' > span')[0]
+                let label2 = document.querySelectorAll('.player-' + (winPlayer + 1) + ' > span')[1]
+                btnElem.style.border = '4px solid #333'
+                btnElem.style.boxShadow = 'none'
+                label1.style.border = '4px solid #333'
+                label1.style.boxShadow = 'none'
+                label2.style.border = '2px solid #333'
+                label2.style.boxShadow = 'none'
+                winPlayer = -1
+            }
+            break
+        }
+        case 'PlayerWin' : {
+            winPlayer = json.chairId
+            let btnElem = document.querySelector('.player-' + (winPlayer + 1) + ' > button')
+            let label1 = document.querySelectorAll('.player-' + (winPlayer + 1) + ' > span')[0]
+            let label2 = document.querySelectorAll('.player-' + (winPlayer + 1) + ' > span')[1]
+            btnElem.style.border = '4px solid rgb(248, 236, 73)'
+            btnElem.style.boxShadow = 'inset 0 0 25px rgb(248, 236, 73)'
+            label1.style.border = '4px solid rgb(248, 236, 73)'
+            label1.style.boxShadow = 'inset 0 0 19px rgb(248, 236, 73)'
+            label2.style.border = '2px solid rgb(248, 236, 73)'
+            label2.style.boxShadow = 'inset 0 0 19px rgb(248, 236, 73)'
             break
         }
         case 'MaxRaise' : {
@@ -570,8 +639,16 @@ function sockEvent(event) {
             break
         }
         case 'PlayerFolded' : {
-            let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
+            let player = json.chairId
+            playersCardArray[player].height = 0
+            playersCardArray[player].width = 0
+            playersCardArray[player].finalX1 = canvas.width / 2
+            playersCardArray[player].finalX2 = canvas.width / 2
+            playersCardArray[player].finalY1 = 250
+            playersCardArray[player].finalY2 = 250
+            let elem = document.querySelector('.player-' + (player + 1) + ' .player-rate')
             elem.innerHTML = json.currentBank + '/0'
+            document.querySelector('.player-' + (player + 1) + ' > button').style.opacity = '0'
             break
         }
         case 'PlayerCalled' : {
@@ -583,6 +660,29 @@ function sockEvent(event) {
             let elem = document.querySelector('.player-' + (json.chairId + 1) + ' .player-rate')
             elem.innerHTML = json.currentBank + '/' + json.bet
             break
+        }
+        case 'RevealCards' : {
+            let id = json.chairId
+
+            let card1 = '../images/cards/' + json.firstCard.suit + '_' + json.firstCard.value + '.png'
+            let card2 = '../images/cards/' + json.secondCard.suit + '_' + json.secondCard.value + '.png'
+
+            getCards(id, card1, card2)
+            break
+        }
+        case 'PlayerGetUp' : {
+            let id = json.chairId
+            occupiedPlaces[id] = false
+            playersWalks[id] = false
+            playersHasCards[id] = false
+            playersCardArray[id] = null
+            document.querySelector('.player-' + (id + 1) + ' > button').style.opacity = '0.8'
+            let elem = document.querySelector('.player-' + (id + 1) + ' > span')
+            elem.innerHTML = 'free'
+            elem = document.querySelector('.player-' + (id + 1) + ' > button')
+            elem.innerHTML = '+'
+            elem = document.querySelector('.player-' + (id + 1) + ' .player-rate')
+            elem.innerHTML = '0'
         }
     }
 }
@@ -598,7 +698,7 @@ function sitDown(id) {
             if (xhr.status === 200) {
                 chairId = id
                 occupiedPlaces[id] = true
-                stompClient.subscribe(
+                chairSubscriber = stompClient.subscribe(
                     '/user/' + roomId + '_' + chairId + '/events', e => {
                         sockEvent(e.body)
                     }
@@ -612,7 +712,7 @@ function sitDown(id) {
 function webSocketConnect() {
     stompClient.connect({}, () => {
         console.log('connected')
-        stompClient.subscribe(
+        roomSubscriber = stompClient.subscribe(
             '/room/' + roomId + "/events", e => {
                 sockEvent(e.body)
             }
@@ -676,6 +776,22 @@ function check() {
     xhr.send()
 }
 
-function gotoMainMenu() {
+function escapeRoom() {
+    roomSubscriber.unsubscribe()
     window.location.replace('/main')
+}
+
+function getUp() {
+    let xhr = new XMLHttpRequest()
+    xhr.open('POST', '/room/getup')
+    xhr.setRequestHeader('Content-Type', 'application/json')
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            console.log(xhr.status)
+            console.log(xhr.responseText)
+            chairSubscriber.unsubscribe()
+            chairId = -1
+        }
+    }
+    xhr.send()
 }
